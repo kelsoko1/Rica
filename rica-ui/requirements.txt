@@ -1,0 +1,4 @@
+camoufox>=0.4.11
+playwright>=1.40.0
+asyncio>=3.4.3
+pyotp>=2.8.0

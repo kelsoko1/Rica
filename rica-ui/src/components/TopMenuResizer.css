@@ -1,0 +1,51 @@
+.top-menu-resizer {
+  width: 100%;
+  height: 8px;
+  cursor: ns-resize;
+  background-color: transparent;
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  touch-action: none; /* Prevents scrolling on touch devices */
+}
+
+.top-menu-resizer:hover {
+  background-color: rgba(62, 123, 250, 0.1);
+}
+
+.top-menu-resizer:active {
+  background-color: rgba(62, 123, 250, 0.2);
+}
+
+.resizer-handle-horizontal-line {
+  width: 40%;
+  max-width: 100px;
+  min-width: 40px;
+  height: 2px;
+  background-color: var(--border);
+  border-radius: 1px;
+  transition: background-color 0.2s ease, width 0.2s ease;
+}
+
+.top-menu-resizer:hover .resizer-handle-horizontal-line {
+  background-color: var(--accent);
+  width: 60%;
+  max-width: 150px;
+}
+
+.top-menu-resizer:active .resizer-handle-horizontal-line {
+  background-color: var(--accent);
+  width: 80%;
+  max-width: 200px;
+}
+
+/* Prevent text selection during resize */
+body.resizing-top-menu * {
+  cursor: ns-resize !important;
+  user-select: none !important;
+}

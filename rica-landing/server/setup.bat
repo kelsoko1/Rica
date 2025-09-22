@@ -1,0 +1,13 @@
+@echo off
+echo Setting up Rica API Server...
+
+echo Installing dependencies...
+call npm install
+
+echo Creating .env file...
+copy .env.example .env
+
+echo Starting server...
+call npm run dev
+
+echo Setup complete! The server is now running at http://localhost:8080

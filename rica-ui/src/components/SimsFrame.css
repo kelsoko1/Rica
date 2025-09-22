@@ -1,0 +1,430 @@
+/* Simulations Frame Styles */
+.sims-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sims-sidebar {
+  width: 320px;
+  min-width: 320px;
+  height: 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 17, 26, 0.7);
+}
+
+.sims-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sims-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.new-scenario-btn {
+  background: rgba(62, 123, 250, 0.1);
+  border: 1px solid rgba(62, 123, 250, 0.2);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-scenario-btn:hover {
+  background: rgba(62, 123, 250, 0.2);
+  transform: translateY(-1px);
+}
+
+.new-scenario-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* New Scenario Form */
+.new-scenario-form {
+  padding: 16px;
+  background: rgba(62, 123, 250, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.new-scenario-form input,
+.new-scenario-form textarea {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.new-scenario-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.create-btn {
+  background: rgba(62, 123, 250, 0.2);
+  border: 1px solid rgba(62, 123, 250, 0.3);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-btn:hover {
+  background: rgba(62, 123, 250, 0.3);
+  transform: translateY(-1px);
+}
+
+.create-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Scenario List */
+.scenario-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scenario-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scenario-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-item.active {
+  background: rgba(62, 123, 250, 0.1);
+  border-color: rgba(62, 123, 250, 0.2);
+}
+
+.scenario-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.scenario-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-ready {
+  background: #4cd964;
+  box-shadow: 0 0 8px rgba(76, 217, 100, 0.4);
+}
+
+.status-running {
+  background: #007aff;
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
+  animation: pulse 1.5s infinite;
+}
+
+.status-completed {
+  background: #5856d6;
+  box-shadow: 0 0 8px rgba(88, 86, 214, 0.4);
+}
+
+.status-failed {
+  background: #ff3b30;
+  box-shadow: 0 0 8px rgba(255, 59, 48, 0.4);
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.scenario-item h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.scenario-description {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.scenario-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.scenario-type {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(62, 123, 250, 0.1);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Content Area */
+.sims-content {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.empty-icon {
+  margin-bottom: 16px;
+  color: rgba(62, 123, 250, 0.6);
+}
+
+.empty-state h3 {
+  margin: 0;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  max-width: 300px;
+}
+
+/* Scenario Detail */
+.scenario-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.scenario-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 16px;
+}
+
+.scenario-detail-header > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scenario-detail-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.scenario-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.run-btn {
+  background: rgba(62, 123, 250, 0.2);
+  border: 1px solid rgba(62, 123, 250, 0.3);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.run-btn:hover {
+  background: rgba(62, 123, 250, 0.3);
+  transform: translateY(-1px);
+}
+
+.run-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.scenario-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.scenario-description-full {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.scenario-description-full h3 {
+  margin: 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.scenario-description-full p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.simulation-frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.simulation-frame h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.iframe-wrapper {
+  flex: 1;
+  min-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: none;
+}
