@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, Container, Breadcrumbs, Link, Paper, Tabs, Tab } from '@mui/material';
+import { Box, Typography, Container, Breadcrumbs, Link, Paper, Tabs, Tab, Button } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import PaymentHistory from '../components/payments/PaymentHistory';
-import WebhookHandler from '../components/payments/WebhookHandler';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-import WebhookIcon from '@mui/icons-material/Webhook';
 
 const PaymentHistoryPage = () => {
   const { currentUser } = useAuth();
@@ -104,12 +102,7 @@ const PaymentHistoryPage = () => {
                 id="tab-2" 
                 aria-controls="tabpanel-2" 
               />
-              <Tab 
-                icon={<WebhookIcon />} 
-                label="Webhooks" 
-                id="tab-3" 
-                aria-controls="tabpanel-3" 
-              />
+
             </Tabs>
           </Paper>
           
@@ -125,9 +118,7 @@ const PaymentHistoryPage = () => {
             <PaymentMethodsPanel />
           </TabPanel>
           
-          <TabPanel value={tabValue} index={3}>
-            <WebhookHandler />
-          </TabPanel>
+
         </Container>
       </Box>
     </motion.div>

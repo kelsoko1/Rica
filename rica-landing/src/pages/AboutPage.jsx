@@ -309,103 +309,112 @@ const AboutPage = () => {
 
 
 
-      {/* Our Journey */}
-      <Box sx={{ py: 10, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+      {/* The Problem We Solve */}
+      <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography variant="h6" component="p" color="primary" sx={{ mb: 2, fontWeight: 600 }}>
-              OUR JOURNEY
+              THE PROBLEM WE SOLVE
             </Typography>
             <Typography variant="h3" component="h2" sx={{ mb: 3, fontWeight: 700 }}>
-              Key milestones
+              Protecting What Matters Most in a Digital World
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
-              From our founding to today, we've been on an exciting journey of growth and innovation.
+            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto' }}>
+              In today's connected world, individuals and organizations face unprecedented digital threats. 
+              From cyberbullying to data breaches, the risks are real and growing every day.
             </Typography>
           </Box>
 
-          <Box sx={{ position: 'relative' }}>
-            <Box sx={{ 
-              position: 'absolute', 
-              left: '50%', 
-              top: 0, 
-              bottom: 0, 
-              width: 2, 
-              bgcolor: 'divider',
-              transform: 'translateX(-50%)',
-              display: { xs: 'none', md: 'block' }
-            }} />
-            
-            {milestones.map((milestone, index) => (
-              <Box 
-                key={index} 
-                sx={{ 
-                  position: 'relative', 
-                  mb: 6,
-                  '&:last-child': { mb: 0 }
-                }}
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
               >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  <Grid 
-                    container 
-                    spacing={4} 
-                    sx={{ 
-                      flexDirection: index % 2 === 0 ? 'row' : 'row-reverse',
-                      display: { xs: 'block', md: 'flex' }
-                    }}
+                <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+                  The Growing Digital Threats
+                </Typography>
+                
+                <List sx={{ mb: 4 }}>
+                  {[
+                    '1 in 3 people experience cyberbullying in their lifetime',
+                    '60% of small businesses close within 6 months of a cyber attack',
+                    'Personal data is being bought and sold on the dark web every second',
+                    'Brand reputation can be destroyed overnight by digital threats'
+                  ].map((item, index) => (
+                    <ListItem key={index} disableGutters sx={{ py: 1 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <CheckCircleOutlineIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary={item} />
+                    </ListItem>
+                  ))}
+                </List>
+              </motion.div>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <Box 
+                  component="img"
+                  src="/src/assets/digital-threats.svg"
+                  alt="Digital threats"
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: '12px',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+                  }}
+                />
+              </motion.div>
+            </Grid>
+          </Grid>
+          
+          <Box sx={{ mt: 8, textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+              How Rica Makes a Difference
+            </Typography>
+            <Grid container spacing={4} sx={{ mt: 2 }}>
+              {[
+                {
+                  title: 'AI-Powered Protection',
+                  description: 'Our advanced AI constantly monitors for threats 24/7, identifying risks before they become problems.'
+                },
+                {
+                  title: 'Comprehensive Coverage',
+                  description: 'From personal accounts to enterprise systems, we provide complete digital protection.'
+                },
+                {
+                  title: 'Peace of Mind',
+                  description: 'Know that your digital presence is being watched over by industry-leading security experts.'
+                }
+              ].map((item, index) => (
+                <Grid item xs={12} md={4} key={index}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
                   >
-                    <Grid item xs={12} md={5} sx={{ position: 'relative' }}>
-                      <Box sx={{ 
-                        position: { xs: 'static', md: 'relative' },
-                        textAlign: { 
-                          xs: 'left', 
-                          md: index % 2 === 0 ? 'right' : 'left' 
-                        },
-                        pr: { xs: 0, md: index % 2 === 0 ? 4 : 0 },
-                        pl: { xs: 0, md: index % 2 === 0 ? 0 : 4 },
-                      }}>
-                        <Typography 
-                          variant="h2" 
-                          sx={{ 
-                            color: 'primary.main',
-                            fontWeight: 700,
-                            mb: 1
-                          }}
-                        >
-                          {milestone.year}
-                        </Typography>
-                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-                          {milestone.title}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                          {milestone.description}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} md={2} sx={{ 
-                      display: { xs: 'none', md: 'flex' },
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}>
-                      <Box sx={{ 
-                        width: 20, 
-                        height: 20, 
-                        borderRadius: '50%', 
-                        bgcolor: 'primary.main',
-                        border: `4px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                        zIndex: 1
-                      }} />
-                    </Grid>
-                    <Grid item xs={12} md={5} />
-                  </Grid>
-                </motion.div>
-              </Box>
-            ))}
+                    <Card sx={{ height: '100%', p: 3, textAlign: 'left' }}>
+                      <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
+                        {item.title}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        {item.description}
+                      </Typography>
+                    </Card>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         </Container>
       </Box>

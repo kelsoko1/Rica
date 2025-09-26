@@ -32,25 +32,9 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   }
 
   if (!requireAuth && currentUser) {
-    // Redirect to Rica UI if user is already authenticated
-    // In a real app, this would be the URL of the Rica UI application
-    window.location.href = 'http://localhost:3000';
-    return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '100vh' 
-        }}
-      >
-        <CircularProgress color="primary" size={60} sx={{ mb: 3 }} />
-        <Typography variant="h6" color="text.secondary">
-          Redirecting to dashboard...
-        </Typography>
-      </Box>
-    );
+    // If user is authenticated but this is a public route, show the content
+    // without redirecting
+    return children;
   }
 
   return children;

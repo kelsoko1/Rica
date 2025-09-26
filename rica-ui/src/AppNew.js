@@ -1,54 +1,36 @@
 import React, {useState, useEffect} from 'react';
 import LeftNav from './components/LeftNav';
-import ProjectExplorer from './components/ProjectExplorer';
-import IntegratedTerminal from './components/IntegratedTerminal';
+
+
 import ThreatDashboard from './components/ThreatDashboard';
 import BrowserTabs from './components/BrowserTabs';
 import SimsFrame from './components/SimsFrame';
 import FabricFrame from './components/FabricFrame';
 import TeamsManager from './components/TeamsManager';
 import DeviceManager from './components/DeviceManager';
-import ResizablePanel from './components/ResizablePanel';
-import VerticalResizer from './components/VerticalResizer';
-import HorizontalResizer from './components/HorizontalResizer';
 import TopMenuResizer from './components/TopMenuResizer';
+import CodeServer from './components/CodeServer';
 import CustomLeftSidebar from './components/CustomLeftSidebar';
 import StarrySidebar from './components/StarrySidebar';
 import ErrorBoundary from './components/ErrorBoundary';
 import './components/Workspace.css';
-import './components/ResizablePanel.css';
-import './components/VerticalResizer.css';
-import './components/HorizontalResizer.css';
 import './components/TopMenuResizer.css';
 import './components/MainContent.css';
-import './components/TerminalPanel.css';
 
 export default function App(){
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   // Start with no active item by default
   const [activeNavItem, setActiveNavItem] = useState(null);
-  const [terminalVisible, setTerminalVisible] = useState(false);
-  const [terminalHeight, setTerminalHeight] = useState(300); // Default height in pixels
-  const [terminalWidth, setTerminalWidth] = useState(window.innerWidth - 240); // Default width for terminal
+
   const [leftNavWidth, setLeftNavWidth] = useState(240); // Default width for left nav
   const [topMenuHeight, setTopMenuHeight] = useState(64); // Default height for top menu
   const [starrySidebarOpen, setStarrySidebarOpen] = useState(false); // State for Starry sidebar
   
-  // Handle window resize to adjust terminal width
+  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      // Adjust terminal width based on window size, but respect user's custom width if set
-      const savedWidth = localStorage.getItem('ricaTerminalWidth');
-      if (!savedWidth) {
-        setTerminalWidth(Math.min(window.innerWidth - 240, window.innerWidth * 0.8));
-      } else {
-        // Make sure the width doesn't exceed the window width
-        const parsedWidth = parseInt(savedWidth, 10);
-        if (parsedWidth > window.innerWidth - 100) {
-          setTerminalWidth(window.innerWidth - 100);
-        }
-      }
+      // Handle any window resize logic here if needed
     };
     
     window.addEventListener('resize', handleResize);
@@ -85,15 +67,9 @@ export default function App(){
   const handleNavItemChange = (item) => {
     setActiveNavItem(item);
     
-    // Show terminal by default when switching to project view
-    if (item === 'project') {
-      setTerminalVisible(true);
-    }
-  };
+    };
   
-  const toggleTerminal = () => {
-    setTerminalVisible(!terminalVisible);
-  };
+
 
   const toggleMobileNav = () => {
     setMobileNavVisible(!mobileNavVisible);
@@ -133,17 +109,6 @@ export default function App(){
           <div className="topbar-content" style={{ height: `${topMenuHeight}px` }}>
             <div className="top-left"></div>
             <div className="top-right">
-            <button 
-              className={`terminal-toggle ${terminalVisible ? 'active' : ''}`} 
-              onClick={toggleTerminal}
-              title={terminalVisible ? "Hide Terminal" : "Show Terminal"}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 17L10 11L4 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 19H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Terminal</span>
-            </button>
             
             <button 
               className={`starry-toggle ${starrySidebarOpen ? 'active' : ''}`} 
@@ -156,7 +121,12 @@ export default function App(){
               <span>Starry</span>
             </button>
             
-            <div className="credits">
+            <div 
+              className="credits"
+              onClick={() => window.location.href = 'http://localhost:3030/payment-history'}
+              style={{ cursor: 'pointer' }}
+              title="View Billing & Tokens"
+            >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 1V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -164,7 +134,12 @@ export default function App(){
               <strong id="bal">25</strong>
             </div>
             
-            <div className="user-menu">
+            <div 
+              className="user-menu"
+              onClick={() => window.location.href = 'http://localhost:3030/profile'}
+              style={{ cursor: 'pointer' }}
+              title="Account Settings"
+            >
               <div className="user-avatar">KD</div>
               <div className="user-info">
                 <div className="user-name">Kelvin Demo</div>
@@ -197,44 +172,16 @@ export default function App(){
           ) : (
             <div className="workspace-content-container">
               {activeNavItem === 'browser' && <BrowserTabs className="browser-tabs fade-in" />}
-              {activeNavItem === 'project' && <ProjectExplorer className="project-explorer fade-in" />}
+
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
               {activeNavItem === 'devices' && <DeviceManager className="device-manager fade-in" />}
               {activeNavItem === 'sims' && <SimsFrame className="sims-frame fade-in" />}
               {activeNavItem === 'fabric' && <FabricFrame className="fabric-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
+              {activeNavItem === 'project' && <CodeServer className="code-server fade-in" />}
             </div>
           )}
         </div>
-        
-        {/* Terminal Panel */}
-        {terminalVisible && (
-          <div className="terminal-panel" style={{ height: `${terminalHeight}px` }}>
-            <HorizontalResizer 
-              height={terminalHeight}
-              setHeight={setTerminalHeight}
-              minHeight={100}
-              maxHeight={window.innerHeight * 0.7}
-              position="top"
-            />
-            <div className="terminal-header">
-              <div className="terminal-tabs">
-                <div className="terminal-tab active">Terminal</div>
-              </div>
-              <div className="terminal-actions">
-                <button className="terminal-action" onClick={toggleTerminal}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div className="terminal-content">
-              <IntegratedTerminal />
-            </div>
-          </div>
-        )}
       </div>
     </div>
     </ErrorBoundary>

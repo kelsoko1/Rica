@@ -1,23 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import LeftNav from './components/LeftNav';
-import ProjectExplorer from './components/ProjectExplorer';
-import IntegratedTerminal from './components/IntegratedTerminal';
+
+
 import ThreatDashboard from './components/ThreatDashboard';
 import BrowserTabs from './components/BrowserTabs';
 import SimsFrame from './components/SimsFrame';
 import FabricFrame from './components/FabricFrame';
 import TeamsManager from './components/TeamsManager';
-import ResizablePanel from './components/ResizablePanel';
-import VerticalResizer from './components/VerticalResizer';
-import HorizontalResizer from './components/HorizontalResizer';
 import TopMenuResizer from './components/TopMenuResizer';
 import CustomLeftSidebar from './components/CustomLeftSidebar';
 import StarrySidebar from './components/StarrySidebar';
 import ErrorBoundary from './components/ErrorBoundary';
 import './components/Workspace.css';
-import './components/ResizablePanel.css';
-import './components/VerticalResizer.css';
-import './components/HorizontalResizer.css';
 import './components/TopMenuResizer.css';
 import './components/MainContent.css';
 
@@ -26,27 +20,15 @@ export default function App(){
   const [mobileNavVisible, setMobileNavVisible] = useState(false);
   // Start with no active item by default
   const [activeNavItem, setActiveNavItem] = useState(null);
-  const [terminalVisible, setTerminalVisible] = useState(false);
-  const [terminalHeight, setTerminalHeight] = useState(300); // Default height in pixels
-  const [terminalWidth, setTerminalWidth] = useState(window.innerWidth - 240); // Default width for terminal
+
   const [leftNavWidth, setLeftNavWidth] = useState(240); // Default width for left nav
   const [topMenuHeight, setTopMenuHeight] = useState(64); // Default height for top menu
   const [starrySidebarOpen, setStarrySidebarOpen] = useState(false); // State for Starry sidebar
   
-  // Handle window resize to adjust terminal width
+  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      // Adjust terminal width based on window size, but respect user's custom width if set
-      const savedWidth = localStorage.getItem('ricaTerminalWidth');
-      if (!savedWidth) {
-        setTerminalWidth(Math.min(window.innerWidth - 240, window.innerWidth * 0.8));
-      } else {
-        // Make sure the width doesn't exceed the window width
-        const parsedWidth = parseInt(savedWidth, 10);
-        if (parsedWidth > window.innerWidth - 100) {
-          setTerminalWidth(window.innerWidth - 100);
-        }
-      }
+      // Handle any window resize logic here if needed
     };
     
     window.addEventListener('resize', handleResize);
@@ -82,15 +64,6 @@ export default function App(){
   
   const handleNavItemChange = (item) => {
     setActiveNavItem(item);
-    
-    // Show terminal by default when switching to project view
-    if (item === 'project') {
-      setTerminalVisible(true);
-    }
-  };
-  
-  const toggleTerminal = () => {
-    setTerminalVisible(!terminalVisible);
   };
 
   const toggleMobileNav = () => {
@@ -131,17 +104,6 @@ export default function App(){
           <div className="topbar-content" style={{ height: `${topMenuHeight}px` }}>
             <div className="top-left"></div>
             <div className="top-right">
-            <button 
-              className={`terminal-toggle ${terminalVisible ? 'active' : ''}`} 
-              onClick={toggleTerminal}
-              title={terminalVisible ? "Hide Terminal" : "Show Terminal"}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 17L10 11L4 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 19H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Terminal</span>
-            </button>
             
             <button 
               className={`starry-toggle ${starrySidebarOpen ? 'active' : ''}`} 
@@ -195,7 +157,7 @@ export default function App(){
           ) : (
             <div className="workspace-content-container">
               {activeNavItem === 'browser' && <BrowserTabs className="browser-tabs fade-in" />}
-              {activeNavItem === 'project' && <ProjectExplorer className="project-explorer fade-in" />}
+
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
               {activeNavItem === 'sims' && <SimsFrame className="sims-frame fade-in" />}
               {activeNavItem === 'fabric' && <FabricFrame className="fabric-frame fade-in" />}
@@ -203,27 +165,6 @@ export default function App(){
             </div>
           )}
         </div>
-        
-        {/* Terminal panel with vertical and horizontal resizers */}
-        {terminalVisible && (
-          <div className="terminal-container" style={{ width: `${terminalWidth}px` }}>
-            <VerticalResizer 
-              height={terminalHeight} 
-              setHeight={setTerminalHeight} 
-              minHeight={100} 
-              maxHeight={800}
-            />
-            <HorizontalResizer
-              width={terminalWidth}
-              setWidth={setTerminalWidth}
-              minWidth={300}
-              maxWidth={window.innerWidth - 100}
-            />
-            <div className="terminal-panel" style={{ height: `${terminalHeight}px` }}>
-              <IntegratedTerminal />
-            </div>
-          </div>
-        )}
       </div>
     </div>
     </ErrorBoundary>

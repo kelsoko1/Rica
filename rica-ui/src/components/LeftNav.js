@@ -24,6 +24,8 @@ export default function LeftNav({collapsed, onToggle, className, onNavItemChange
     }
   };
   
+  // Logo click handler removed to prevent redirection
+
   return (
     <div className={'left-nav ' + (collapsed ? 'collapsed' : '') + (className ? ' ' + className : '')}>
       <div className="brand">
@@ -47,19 +49,7 @@ export default function LeftNav({collapsed, onToggle, className, onNavItemChange
           {!collapsed && <span>Swarm</span>}
         </button>
 
-        <button 
-          className={`nav-btn ${activeItem === 'project' ? 'active' : ''} ${hoverItem === 'project' ? 'hover' : ''}`} 
-          title="Project Explorer"
-          onClick={() => handleNavClick('project')}
-          onMouseEnter={() => setHoverItem('project')}
-          onMouseLeave={() => setHoverItem(null)}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {!collapsed && <span>Project Explorer</span>}
-        </button>
+
         
         <button 
           className={`nav-btn ${activeItem === 'devices' ? 'active' : ''} ${hoverItem === 'devices' ? 'hover' : ''}`} 
@@ -131,6 +121,21 @@ export default function LeftNav({collapsed, onToggle, className, onNavItemChange
               <path d="M9.08997 17.78C7.67997 18.72 7.67997 20.26 9.08997 21.2C10.69 22.27 13.31 22.27 14.91 21.2C16.32 20.26 16.32 18.72 14.91 17.78C13.32 16.72 10.69 16.72 9.08997 17.78Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {!collapsed && <span>Teams</span>}
+          </button>
+
+          <button 
+            className={`nav-btn ${activeItem === 'project' ? 'active' : ''} ${hoverItem === 'project' ? 'hover' : ''}`} 
+            title="Project Explorer"
+            onClick={() => handleNavClick('project')}
+            onMouseEnter={() => setHoverItem('project')}
+            onMouseLeave={() => setHoverItem(null)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M7 15.5L10 12.5L7 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M13 15.5L17 15.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {!collapsed && <span>Project Explorer</span>}
           </button>
       </nav>
       

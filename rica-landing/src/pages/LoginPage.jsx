@@ -71,13 +71,10 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [loginError, setLoginError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   
-  useEffect(() => {
-    // If user is already logged in, redirect to Rica UI
-    if (currentUser) {
-      window.location.href = 'http://localhost:3000';
-    }
-  }, [currentUser]);
+  // Removed auto-redirect to Rica UI after login
+  // User will now see a success message and can navigate manually
   
   useEffect(() => {
     // Set login error from auth context
@@ -130,10 +127,11 @@ const LoginPage = () => {
         // Call login function from auth context
         await login(formData.email, formData.password);
         
-        // If successful, the user will be redirected to Rica UI
-        // by the useEffect hook that watches currentUser
+        // Set login success state
+        setLoginSuccess(true);
+        setLoginError('');
         
-        // For demo purposes, we'll also store the rememberMe preference
+        // Store the rememberMe preference
         if (formData.rememberMe) {
           localStorage.setItem('ricaRememberMe', 'true');
         } else {
@@ -151,6 +149,52 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
+  // If login was successful, show success message
+  if (loginSuccess) {
+    return (
+      <Box 
+        sx={{ 
+          py: { xs: 10, md: 12 }, 
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="sm">
+          <StyledPaper>
+            <Box sx={{ textAlign: 'center', p: 4 }}>
+              <CheckCircleOutlineIcon 
+                sx={{ 
+                  fontSize: 64, 
+                  color: 'success.main',
+                  mb: 2 
+                }} 
+              />
+              <Typography variant="h5" gutterBottom>
+                Login Successful!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                You have successfully logged in to your Rica account.
+              </Typography>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => window.location.href = 'http://localhost:3000'}
+                sx={{ mt: 2 }}
+              >
+                Go to Dashboard
+              </Button>
+            </Box>
+          </StyledPaper>
+        </Container>
+      </Box>
+    );
+  }
+
+  // Show login form
   return (
     <Box 
       sx={{ 

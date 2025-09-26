@@ -107,7 +107,7 @@ const Header = () => {
   const drawer = (
     <Box sx={{ width: 250, height: '100%', backgroundColor: 'background.default', p: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <LogoText variant="h6" component={RouterLink} to="/" sx={{ textDecoration: 'none' }}>
+        <LogoText variant="h6" component="div" sx={{ textDecoration: 'none', cursor: 'default' }}>
           RICA
         </LogoText>
         <IconButton onClick={handleDrawerToggle} sx={{ color: 'text.primary' }}>
@@ -133,6 +133,8 @@ const Header = () => {
               button 
               component="a"
               href="http://localhost:3000"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={handleDrawerToggle}
               sx={{ 
                 mb: 1,
@@ -243,12 +245,12 @@ const Header = () => {
               <LogoText
                 variant="h6"
                 noWrap
-                component={RouterLink}
-                to="/"
+                component="div"
                 sx={{
                   mr: 2,
                   display: { xs: 'none', md: 'flex' },
                   textDecoration: 'none',
+                  cursor: 'default'
                 }}
               >
                 RICA
@@ -273,13 +275,13 @@ const Header = () => {
             <LogoText
               variant="h6"
               noWrap
-              component={RouterLink}
-              to="/"
+              component="div"
               sx={{
                 mr: 2,
                 display: { xs: 'flex', md: 'none' },
                 flexGrow: 1,
                 textDecoration: 'none',
+                cursor: 'default'
               }}
             >
               RICA
@@ -315,7 +317,10 @@ const Header = () => {
                     transition={{ duration: 0.5, delay: 0.4 }}
                   >
                     <Button 
+                      component="a"
                       href="http://localhost:3000"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       variant="contained" 
                       color="primary"
                       sx={{ mr: 1 }}

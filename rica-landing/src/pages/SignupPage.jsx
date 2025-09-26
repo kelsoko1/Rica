@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import Cards from 'react-credit-cards';
+import 'react-credit-cards/es/styles-compiled.css';
 import {
   Box,
   Container,
@@ -62,7 +64,7 @@ const GradientBox = styled(Box)(({ theme }) => ({
   opacity: 0.15,
 }));
 
-const steps = ['Account Details', 'Personal Information', 'Subscription Plan'];
+const steps = ['Account Details', 'Personal Information', 'Payment Information'];
 
 const SignupPage = () => {
   const theme = useTheme();
@@ -79,17 +81,25 @@ const SignupPage = () => {
     company: '',
     jobTitle: '',
     agreeTerms: false,
-    plan: 'professional'
+    plan: 'team'
+  });
+
+  // Credit card state
+  const [cardData, setCardData] = useState({
+    cvc: '',
+    expiry: '',
+    focus: '',
+    name: '',
+    number: '',
   });
   const [errors, setErrors] = useState({});
   const [signupError, setSignupError] = useState('');
   
-  useEffect(() => {
-    // If user is already logged in, redirect to Rica UI
-    if (currentUser) {
-      window.location.href = 'http://localhost:3000';
-    }
-  }, [currentUser]);
+  // State to track successful signup
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  
+  // Removed automatic redirection after signup
+  // User will now see a success message and can navigate manually
   
   useEffect(() => {
     // Set signup error from auth context
@@ -100,10 +110,19 @@ const SignupPage = () => {
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'agreeTerms' ? checked : value
-    });
+    
+    // Handle credit card inputs separately
+    if (['cvc', 'expiry', 'name', 'number'].includes(name)) {
+      setCardData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
+      setFormData({
+        ...formData,
+        [name]: name === 'agreeTerms' ? checked : value
+      });
+    }
     
     // Clear error when field is edited
     if (errors[name]) {
@@ -112,6 +131,38 @@ const SignupPage = () => {
         [name]: ''
       });
     }
+  };
+
+  const handleCardInputFocus = (e) => {
+    setCardData(prev => ({
+      ...prev,
+      focus: e.target.name
+    }));
+  };
+
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
+
+  const formatExpiry = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (v.length >= 3) {
+      return `${v.slice(0, 2)}/${v.slice(2, 4)}`;
+    }
+    return v;
   };
 
   const handlePlanSelect = (plan) => {
@@ -141,6 +192,21 @@ const SignupPage = () => {
       if (!formData.agreeTerms) newErrors.agreeTerms = 'You must agree to the terms and conditions';
     }
     
+    if (activeStep === 3) {
+      if (!cardData.number || cardData.number.replace(/\s/g, '').length < 15) {
+        newErrors.cardNumber = 'Please enter a valid card number';
+      }
+      if (!cardData.name) {
+        newErrors.cardName = 'Cardholder name is required';
+      }
+      if (!cardData.expiry || !/\d{2}\/\d{2}/.test(cardData.expiry)) {
+        newErrors.cardExpiry = 'Please enter a valid expiry date (MM/YY)';
+      }
+      if (!cardData.cvc || cardData.cvc.length < 3) {
+        newErrors.cardCvc = 'Please enter a valid CVC';
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -151,8 +217,29 @@ const SignupPage = () => {
         // Submit form and register user
         try {
           await signup(formData);
-          // If successful, the user will be redirected to Rica UI
-          // by the useEffect hook that watches currentUser
+          // Show success message
+          setSignupError('');
+          setSignupSuccess(true);
+          // Reset form
+          setActiveStep(0);
+          setFormData({
+            email: '',
+            password: '',
+            confirmPassword: '',
+            firstName: '',
+            lastName: '',
+            company: '',
+            jobTitle: '',
+            agreeTerms: false,
+            plan: 'team'
+          });
+          setCardData({
+            cvc: '',
+            expiry: '',
+            focus: '',
+            name: '',
+            number: '',
+          });
         } catch (error) {
           setSignupError(error.message || 'Registration failed. Please try again.');
           // Stay on the current step if there's an error
@@ -262,9 +349,8 @@ const SignupPage = () => {
       case 1:
         return (
           <Box>
-            <Typography variant="h6" sx={{ mb: 3 }}>Personal Information</Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="First Name"
@@ -343,7 +429,154 @@ const SignupPage = () => {
       case 2:
         return (
           <Box>
-            <Typography variant="h6" sx={{ mb: 3 }}>Choose your plan</Typography>
+            <Typography variant="h6" sx={{ mb: 3 }}>Complete Your Subscription</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Review your plan and complete payment to get started.
+            </Typography>
+            
+            <Box sx={{ mb: 4, p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+              <Typography variant="subtitle1" sx={{ mb: 2 }}>Selected Plan: {formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1)}</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                {formData.plan === 'personal' 
+                  ? '$9.99 per month' 
+                  : formData.plan === 'team' 
+                    ? '$29.99 per user/month' 
+                    : '$5 per month + tokens (Pay As You Go)'}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="subtitle1" sx={{ mb: 2 }}>Select Payment Method</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Paper 
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      border: '1px solid',
+                      borderColor: 'primary.main',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                      }
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ mb: 1 }}>Credit/Debit Card</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      Pay securely using your Visa, Mastercard, or other major credit/debit cards.
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Cards
+                        cvc={cardData.cvc || ''}
+                        expiry={cardData.expiry || ''}
+                        focused={cardData.focus}
+                        name={cardData.name || ''}
+                        number={cardData.number || ''}
+                      />
+                      <Box sx={{ mt: 2 }}>
+                        <TextField
+                          fullWidth
+                          label="Card Number"
+                          name="number"
+                          value={cardData.number}
+                          onChange={handleChange}
+                          onFocus={handleCardInputFocus}
+                          placeholder="1234 5678 9012 3456"
+                          sx={{ mb: 2 }}
+                        />
+                        <TextField
+                          fullWidth
+                          label="Name on Card"
+                          name="name"
+                          value={cardData.name}
+                          onChange={handleChange}
+                          onFocus={handleCardInputFocus}
+                          sx={{ mb: 2 }}
+                        />
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              label="Expiry Date"
+                              name="expiry"
+                              value={cardData.expiry}
+                              onChange={handleChange}
+                              onFocus={handleCardInputFocus}
+                              placeholder="MM/YY"
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              label="CVC"
+                              name="cvc"
+                              value={cardData.cvc}
+                              onChange={handleChange}
+                              onFocus={handleCardInputFocus}
+                              placeholder="123"
+                            />
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </Box>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Paper 
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                      }
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ mb: 1 }}>Mobile Money</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      Pay conveniently using your mobile money account.
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        select
+                        label="Mobile Network"
+                        value={formData.mobileNetwork || ''}
+                        onChange={handleChange}
+                        name="mobileNetwork"
+                        sx={{ mb: 2 }}
+                        SelectProps={{
+                          native: true,
+                        }}
+                      >
+                        <option value="">Select network</option>
+                        <option value="airtel">Airtel Money</option>
+                        <option value="vodacom">M-Pesa (Vodacom)</option>
+                        <option value="halo">Halo Pesa</option>
+                        <option value="mix">Mix by Yas</option>
+                      </TextField>
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
+                        name="phoneNumber"
+                        value={formData.phoneNumber || ''}
+                        onChange={handleChange}
+                        placeholder="e.g., 255712345678"
+                        sx={{ mb: 2 }}
+                      />
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        You'll receive a payment request on your phone to complete the transaction. Standard network charges may apply.
+                      </Alert>
+                    </Box>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Box>
             <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
                 <Paper
@@ -351,41 +584,41 @@ const SignupPage = () => {
                   sx={{
                     p: 3,
                     border: '1px solid',
-                    borderColor: formData.plan === 'starter' ? 'primary.main' : 'divider',
+                    borderColor: formData.plan === 'personal' ? 'primary.main' : 'divider',
                     borderRadius: 2,
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    backgroundColor: formData.plan === 'starter' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+                    backgroundColor: formData.plan === 'personal' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
                     '&:hover': {
                       borderColor: 'primary.main',
                       transform: 'translateY(-4px)',
                       boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
                     }
                   }}
-                  onClick={() => handlePlanSelect('starter')}
+                  onClick={() => handlePlanSelect('personal')}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6">Starter</Typography>
-                    {formData.plan === 'starter' && (
+                    <Typography variant="h6">Personal</Typography>
+                    {formData.plan === 'personal' && (
                       <CheckCircleOutlineIcon color="primary" />
                     )}
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 1 }}>$49<Typography component="span" variant="body2" color="text.secondary">/mo</Typography></Typography>
+                  <Typography variant="h5" sx={{ mb: 1 }}>$9.99<Typography component="span" variant="body2" color="text.secondary">/mo</Typography></Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Perfect for individuals and small teams
+                    Perfect for individual users
                   </Typography>
                   <Box sx={{ mb: 1 }}>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Basic threat detection
+                      Basic threat protection
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Up to 5 browser profiles
+                      Secure browsing
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Standard analytics
+                      Email protection
                     </Typography>
                   </Box>
                 </Paper>
@@ -396,11 +629,11 @@ const SignupPage = () => {
                   sx={{
                     p: 3,
                     border: '1px solid',
-                    borderColor: formData.plan === 'professional' ? 'primary.main' : 'divider',
+                    borderColor: formData.plan === 'team' ? 'primary.main' : 'divider',
                     borderRadius: 2,
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    backgroundColor: formData.plan === 'professional' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+                    backgroundColor: formData.plan === 'team' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
                     position: 'relative',
                     '&:hover': {
                       borderColor: 'primary.main',
@@ -408,7 +641,7 @@ const SignupPage = () => {
                       boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
                     }
                   }}
-                  onClick={() => handlePlanSelect('professional')}
+                  onClick={() => handlePlanSelect('team')}
                 >
                   <Box 
                     sx={{ 
@@ -427,31 +660,31 @@ const SignupPage = () => {
                     POPULAR
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6">Professional</Typography>
-                    {formData.plan === 'professional' && (
+                    <Typography variant="h6">Team</Typography>
+                    {formData.plan === 'team' && (
                       <CheckCircleOutlineIcon color="primary" />
                     )}
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 1 }}>$99<Typography component="span" variant="body2" color="text.secondary">/mo</Typography></Typography>
+                  <Typography variant="h5" sx={{ mb: 1 }}>$29.99<Typography component="span" variant="body2" color="text.secondary">/user/mo</Typography></Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Ideal for growing businesses
+                    Perfect for teams and families
                   </Typography>
                   <Box sx={{ mb: 1 }}>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Advanced threat detection
+                      All Personal features
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Up to 20 browser profiles
+                      Family protection
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Real-time analytics
+                      Child monitoring
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      API access
+                      Shared family dashboard
                     </Typography>
                   </Box>
                 </Paper>
@@ -462,41 +695,41 @@ const SignupPage = () => {
                   sx={{
                     p: 3,
                     border: '1px solid',
-                    borderColor: formData.plan === 'enterprise' ? 'primary.main' : 'divider',
+                    borderColor: formData.plan === 'payAsYouGo' ? 'primary.main' : 'divider',
                     borderRadius: 2,
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    backgroundColor: formData.plan === 'enterprise' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+                    backgroundColor: formData.plan === 'payAsYouGo' ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
                     '&:hover': {
                       borderColor: 'primary.main',
                       transform: 'translateY(-4px)',
                       boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
                     }
                   }}
-                  onClick={() => handlePlanSelect('enterprise')}
+                  onClick={() => handlePlanSelect('payAsYouGo')}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6">Enterprise</Typography>
-                    {formData.plan === 'enterprise' && (
+                    <Typography variant="h6">Pay As You Go</Typography>
+                    {formData.plan === 'payAsYouGo' && (
                       <CheckCircleOutlineIcon color="primary" />
                     )}
                   </Box>
-                  <Typography variant="h5" sx={{ mb: 1 }}>Custom</Typography>
+                  <Typography variant="h5" sx={{ mb: 1 }}>$5<Typography component="span" variant="body2" color="text.secondary">/mo + tokens</Typography></Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    For large organizations with complex needs
+                    Flexible pay-per-use option
                   </Typography>
                   <Box sx={{ mb: 1 }}>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Custom threat detection rules
+                      Pay only for what you use
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Unlimited browser profiles
+                      No long-term commitment
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                      Advanced analytics & reporting
+                      Purchase tokens as needed
                     </Typography>
                     <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
@@ -513,10 +746,62 @@ const SignupPage = () => {
     }
   };
 
+  if (signupSuccess) {
+    return (
+      <Box 
+        sx={{ 
+          py: { xs: 10, md: 12 }, 
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="sm">
+          <StyledPaper>
+            <Box sx={{ textAlign: 'center', p: 4 }}>
+              <CheckCircleOutlineIcon 
+                sx={{ 
+                  fontSize: 64, 
+                  color: 'success.main',
+                  mb: 2 
+                }} 
+              />
+              <Typography variant="h5" gutterBottom>
+                Registration Successful!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                Thank you for signing up for Rica. Your account has been created successfully.
+              </Typography>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => window.location.href = 'http://localhost:3000'}
+                sx={{ mt: 2, mr: 2 }}
+              >
+                Go to Dashboard
+              </Button>
+              <Button 
+                variant="outlined" 
+                color="primary" 
+                onClick={() => setSignupSuccess(false)}
+                sx={{ mt: 2 }}
+              >
+                Back to Login
+              </Button>
+            </Box>
+          </StyledPaper>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
     <Box 
       sx={{ 
-        py: { xs: 10, md: 12 }, 
+        py: { xs: 6, md: 8 },
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',

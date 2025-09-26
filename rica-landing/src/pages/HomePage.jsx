@@ -68,38 +68,38 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 
 const features = [
   {
-    title: 'Advanced Threat Detection',
-    description: 'Identify and respond to sophisticated threats with our AI-powered detection engine that continuously monitors your environment.',
+    title: 'AI-Powered Protection',
+    description: 'Our advanced AI acts as your 24/7 online bodyguard, detecting and preventing cyberbullying and harassment before it affects you.',
     icon: <SecurityIcon fontSize="large" />,
     color: '#6366f1'
   },
   {
-    title: 'Real-time Analytics',
-    description: 'Get instant insights with real-time dashboards and analytics that help you understand your security posture at a glance.',
+    title: 'Leak Detection & Takedown',
+    description: 'Automatically scan the web for your personal information and get instant alerts with one-click takedown options.',
     icon: <SpeedIcon fontSize="large" />,
     color: '#10b981'
   },
   {
-    title: 'Seamless Integration',
-    description: 'Easily integrate with your existing security tools and workflows through our extensive API and pre-built connectors.',
+    title: 'Digital Identity Protection',
+    description: 'Secure and manage your online presence across all platforms with our intelligent identity protection system.',
     icon: <IntegrationInstructionsIcon fontSize="large" />,
     color: '#f43f5e'
   },
   {
-    title: 'Intelligent Automation',
-    description: 'Automate routine security tasks and response workflows to reduce alert fatigue and focus on what matters.',
+    title: 'Multi-Account Security',
+    description: 'Safely manage all your online accounts with our secure vault and automated security checks.',
     icon: <AutoGraphIcon fontSize="large" />,
     color: '#8b5cf6'
   },
   {
-    title: 'Compliance Management',
-    description: 'Stay compliant with regulatory requirements through continuous monitoring and comprehensive reporting capabilities.',
+    title: 'Vulnerability Scanner',
+    description: 'Continuously monitor your devices and accounts for security weaknesses and get personalized recommendations.',
     icon: <VerifiedUserIcon fontSize="large" />,
     color: '#f59e0b'
   },
   {
-    title: 'Multi-browser Profiles',
-    description: 'Create and manage multiple browser profiles with unique fingerprints for secure and isolated browsing sessions.',
+    title: 'Privacy-First AI',
+    description: 'Our AI works for you, not against you - protecting your privacy while keeping you safe online.',
     icon: <LanguageIcon fontSize="large" />,
     color: '#3b82f6'
   }
@@ -107,77 +107,82 @@ const features = [
 
 const testimonials = [
   {
-    name: 'Alex Johnson',
-    role: 'CISO at TechCorp',
-    content: 'Rica has transformed our security operations. The ability to detect threats in real-time and automate responses has reduced our mean time to remediate by 70%.',
-    avatar: 'https://i.pravatar.cc/150?img=1',
+    name: 'Emma Wilson',
+    role: 'High School Teacher & Parent',
+    content: 'Rica has been a game-changer for my students and my own family. The cyberbullying detection helped us identify and address issues before they escalated, and the peace of mind is priceless.',
+    avatar: 'https://i.pravatar.cc/150?img=32',
     rating: 5
   },
   {
-    name: 'Sarah Williams',
-    role: 'Security Analyst at DataGuard',
-    content: 'The multi-browser profile feature is a game-changer for our security research. We can now safely investigate threats without compromising our network.',
-    avatar: 'https://i.pravatar.cc/150?img=5',
+    name: 'David Kim',
+    role: 'Small Business Owner',
+    content: 'When our company data was leaked online, Rica\'s AI detected it within minutes. The one-click takedown feature saved us from what could have been a PR disaster.',
+    avatar: 'https://i.pravatar.cc/150?img=8',
     rating: 5
   },
   {
-    name: 'Michael Chen',
-    role: 'IT Director at GlobalFinance',
-    content: 'Rica\'s integration capabilities are unmatched. We were able to connect all our existing security tools within days, giving us a unified view of our security landscape.',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    rating: 4
+    name: 'Priya Patel',
+    role: 'Social Media Influencer',
+    content: 'As someone in the public eye, I was constantly worried about my online safety. Rica\'s AI bodyguard monitors my accounts 24/7 and has stopped multiple harassment attempts before they reached me.',
+    avatar: 'https://i.pravatar.cc/150?img=60',
+    rating: 5
   }
 ];
 
 const plans = [
   {
-    title: 'Starter',
-    price: '$49',
+    title: 'Personal',
+    price: '$9.99',
     period: 'per month',
-    description: 'Perfect for individuals and small teams',
+    description: 'Essential online protection for individuals',
     features: [
-      'Basic threat detection',
-      'Up to 5 browser profiles',
-      'Standard analytics',
-      '8 hours email support',
-      'Community access'
-    ],
-    buttonText: 'Start Free Trial',
-    buttonVariant: 'outlined',
-    popular: false
-  },
-  {
-    title: 'Professional',
-    price: '$99',
-    period: 'per month',
-    description: 'Ideal for growing businesses',
-    features: [
-      'Advanced threat detection',
-      'Up to 20 browser profiles',
-      'Real-time analytics',
-      'API access',
-      '24/7 priority support',
-      'Team collaboration'
+      'AI-powered cyberbullying detection',
+      'Leak monitoring for 1 email',
+      'Basic identity protection',
+      '24/7 AI threat monitoring',
+      'Email support',
+      'Devices protection'
     ],
     buttonText: 'Start Free Trial',
     buttonVariant: 'contained',
     popular: true
   },
   {
-    title: 'Enterprise',
-    price: 'Custom',
-    period: 'tailored pricing',
-    description: 'For large organizations with complex needs',
+    title: 'Team',
+    price: '$29.99',
+    period: 'per user/month',
+    description: 'Collaborative protection for teams',
     features: [
-      'Custom threat detection rules',
-      'Unlimited browser profiles',
-      'Advanced analytics & reporting',
-      'Dedicated account manager',
-      'Custom integrations',
-      'On-premise deployment option',
-      'SLA guarantees'
+      'All Personal features',
+      'Per-user billing (billed to team leader)',
+      'Team safety monitoring',
+      'Shared threat intelligence',
+      'Priority email & chat support',
+      'Devices protection per user',
+      'Team dashboard',
+      'Basic API access',
+      'Centralized billing'
     ],
-    buttonText: 'Contact Sales',
+    buttonText: 'Start Team Trial',
+    buttonVariant: 'outlined',
+    popular: false
+  },
+  {
+    title: 'Pay As You Go',
+    price: '$5',
+    period: 'month + tokens',
+    description: 'Flexible usage with token-based protection',
+    features: [
+      '$5 monthly base fee',
+      'Includes 100 tokens',
+      'Additional tokens at $0.05 each',
+      'Tokens never expire',
+      'Top up anytime',
+      'No long-term commitment',
+      'Ideal for custom needs',
+      'Usage analytics dashboard'
+    ],
+    buttonText: 'Get Started',
     buttonVariant: 'outlined',
     popular: false
   }
@@ -191,12 +196,7 @@ const HomePage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  useEffect(() => {
-    // If user is already logged in, redirect to Rica UI
-    if (currentUser) {
-      window.location.href = 'http://localhost:3000';
-    }
-  }, [currentUser]);
+  // Removed automatic redirection to allow users to stay on the landing page
 
   return (
     <Box sx={{ pt: { xs: 8, md: 12 } }}>
@@ -230,7 +230,7 @@ const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <StyledChip label="Next-Gen Security Platform" />
+            <StyledChip label="AI-Powered Online Protection" />
           </motion.div>
 
           <motion.div
@@ -252,7 +252,7 @@ const HomePage = () => {
                 textFillColor: 'transparent',
               }}
             >
-              Advanced Security Intelligence Platform
+Your AI-Powered Online Bodyguard
             </Typography>
           </motion.div>
 
@@ -271,8 +271,9 @@ const HomePage = () => {
                 fontWeight: 400
               }}
             >
-              Protect your digital assets with Rica's AI-powered threat detection, 
-              multi-browser profile management, and seamless security integrations.
+              Rica is your 24/7 AI bodyguard, protecting you from cyberbullying, monitoring for personal data leaks, 
+              and keeping your digital identity safe. Choose from flexible plans - from individual protection to team solutions 
+              and pay-as-you-go options. Get peace of mind with proactive protection that works while you sleep.
             </Typography>
           </motion.div>
 
@@ -380,7 +381,7 @@ const HomePage = () => {
                 mx: 'auto'
               }}
             >
-              Rica combines advanced security tools with intuitive design to give you complete control over your digital security.
+              Rica combines AI-powered protection with simple controls to keep you safe from online threats, harassment, and identity theft. Whether you're an individual, team, or have custom security needs, we've got you covered with flexible pricing options.
             </Typography>
           </Box>
 

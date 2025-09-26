@@ -12,54 +12,61 @@ const SUBSCRIPTIONS_KEY = 'rica_subscriptions';
 
 // Subscription plans
 export const subscriptionPlans = {
-  starter: {
-    id: 'starter',
-    name: 'Starter',
-    description: 'Basic features for individuals',
+  personal: {
+    id: 'personal',
+    name: 'Personal',
+    description: 'Essential online protection for individuals',
     price: {
-      monthly: 29,
-      annual: 290, // 10 months price for annual (2 months free)
+      monthly: 9.99,
+      annual: 99.99, // ~17% discount for annual
     },
     features: [
-      'Basic threat detection',
-      'Up to 5 browser profiles',
-      'Standard analytics',
-      'Email support'
+      'AI-powered cyberbullying detection',
+      'Leak monitoring for 1 email',
+      'Basic identity protection',
+      '24/7 AI threat monitoring',
+      'Email support',
+      'Devices protection'
     ]
   },
-  professional: {
-    id: 'professional',
-    name: 'Professional',
-    description: 'Advanced features for professionals',
+  team: {
+    id: 'team',
+    name: 'Team',
+    description: 'Collaborative protection for teams',
     price: {
-      monthly: 79,
-      annual: 790, // 10 months price for annual (2 months free)
+      monthly: 29.99,
+      annual: 299.99, // ~17% discount for annual
     },
     features: [
-      'Advanced threat detection',
-      'Up to 20 browser profiles',
-      'Real-time analytics',
-      'API access',
-      '24/7 priority support',
-      'Team collaboration'
+      'All Personal features',
+      'Per-user billing (billed to team leader)',
+      'Team safety monitoring',
+      'Shared threat intelligence',
+      'Priority email & chat support',
+      'Devices protection per user',
+      'Team dashboard',
+      'Basic API access',
+      'Centralized billing'
     ]
   },
-  enterprise: {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'Complete solution for organizations',
+  payAsYouGo: {
+    id: 'payAsYouGo',
+    name: 'Pay As You Go',
+    description: 'Flexible usage with token-based protection',
     price: {
-      monthly: 199,
-      annual: 1990, // 10 months price for annual (2 months free)
+      monthly: 5, // Base fee
+      tokens: 100, // Tokens included in base fee
+      additionalTokenPrice: 0.05 // Price per additional token
     },
     features: [
-      'Custom threat intelligence',
-      'Unlimited browser profiles',
-      'Advanced analytics & reporting',
-      'Dedicated account manager',
-      'Custom integrations',
-      'On-premise deployment option',
-      'SSO & advanced security'
+      '$5 monthly base fee',
+      'Includes 100 tokens',
+      'Additional tokens at $0.05 each',
+      'Tokens never expire',
+      'Top up anytime',
+      'No long-term commitment',
+      'Ideal for custom needs',
+      'Usage analytics dashboard'
     ]
   }
 };

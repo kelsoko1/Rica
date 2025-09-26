@@ -5,16 +5,7 @@ import { useAuth } from '../context/AuthContext';
 const DashboardRedirect = () => {
   const { currentUser } = useAuth();
 
-  useEffect(() => {
-    // If user is authenticated, redirect to Rica UI
-    if (currentUser) {
-      const redirectTimer = setTimeout(() => {
-        window.location.href = 'http://localhost:3000';
-      }, 1500);
-
-      return () => clearTimeout(redirectTimer);
-    }
-  }, [currentUser]);
+  // Removed automatic redirection to allow users to stay on the landing page
 
   return (
     <Box 
@@ -29,11 +20,10 @@ const DashboardRedirect = () => {
     >
       <CircularProgress color="primary" size={60} sx={{ mb: 4 }} />
       <Typography variant="h4" sx={{ mb: 2 }}>
-        Redirecting to Rica Dashboard
+        Rica Dashboard
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mb: 3 }}>
-        You're being redirected to the Rica application dashboard. If you're not redirected automatically,
-        please click the button below.
+        You can access the Rica application dashboard by clicking the button below.
       </Typography>
       <Box 
         component="a"

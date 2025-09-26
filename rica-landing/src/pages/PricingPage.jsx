@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import {
   Box,
   Container,
@@ -18,12 +19,15 @@ import {
   alpha,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  TextField
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import SecurityIcon from '@mui/icons-material/Security';
 
 const GradientBox = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -42,9 +46,22 @@ const PricingCard = styled(Card)(({ theme, popular }) => ({
   transition: 'all 0.3s ease',
   border: popular ? `2px solid ${theme.palette.primary.main}` : `1px solid ${theme.palette.divider}`,
   position: 'relative',
+  overflow: 'hidden',
   '&:hover': {
     transform: 'translateY(-8px)',
-    boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
+    boxShadow: theme.shadows[8],
+  },
+  '& .MuiCardHeader-root': {
+    backgroundColor: popular ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(3, 2, 2),
+  },
+  '& .MuiCardContent-root': {
+    flexGrow: 1,
+    padding: theme.spacing(3, 2),
+  },
+  '& .MuiCardActions-root': {
+    padding: theme.spacing(0, 2, 3),
   },
 }));
 
@@ -57,71 +74,58 @@ const FeatureItem = styled(Box)(({ theme, included }) => ({
 
 const plans = [
   {
-    title: 'Starter',
-    price: {
-      monthly: 49,
-      annual: 39
-    },
-    description: 'Perfect for individuals and small teams',
+    title: 'Personal',
+    price: '$9.99',
+    period: 'per month',
+    description: 'Essential online protection for individuals',
     features: [
-      { name: 'Basic threat detection', included: true },
-      { name: 'Up to 5 browser profiles', included: true },
-      { name: 'Standard analytics', included: true },
-      { name: '8 hours email support', included: true },
-      { name: 'Community access', included: true },
-      { name: 'API access (100 calls/day)', included: true },
-      { name: 'Team collaboration', included: false },
-      { name: 'Advanced threat detection', included: false },
-      { name: 'Custom integrations', included: false },
-      { name: 'Priority support', included: false }
-    ],
-    buttonText: 'Start Free Trial',
-    buttonVariant: 'outlined',
-    popular: false
-  },
-  {
-    title: 'Professional',
-    price: {
-      monthly: 99,
-      annual: 79
-    },
-    description: 'Ideal for growing businesses',
-    features: [
-      { name: 'Advanced threat detection', included: true },
-      { name: 'Up to 20 browser profiles', included: true },
-      { name: 'Real-time analytics', included: true },
-      { name: 'API access (1000 calls/day)', included: true },
-      { name: '24/7 priority support', included: true },
-      { name: 'Team collaboration', included: true },
-      { name: 'Custom dashboards', included: true },
-      { name: 'Vulnerability scanning', included: true },
-      { name: 'Custom integrations', included: false },
-      { name: 'Dedicated account manager', included: false }
+      'AI-powered cyberbullying detection',
+      'Leak monitoring for 1 email',
+      'Basic identity protection',
+      '24/7 AI threat monitoring',
+      'Email support',
+      'Devices protection'
     ],
     buttonText: 'Start Free Trial',
     buttonVariant: 'contained',
     popular: true
   },
   {
-    title: 'Enterprise',
-    price: {
-      monthly: 'Custom',
-      annual: 'Custom'
-    },
-    description: 'For large organizations with complex needs',
+    title: 'Team',
+    price: '$29.99',
+    period: 'per user/month',
+    description: 'Collaborative protection for teams',
     features: [
-      { name: 'Custom threat detection rules', included: true },
-      { name: 'Unlimited browser profiles', included: true },
-      { name: 'Advanced analytics & reporting', included: true },
-      { name: 'Unlimited API access', included: true },
-      { name: 'Dedicated account manager', included: true },
-      { name: 'Custom integrations', included: true },
-      { name: 'On-premise deployment option', included: true },
-      { name: 'SLA guarantees', included: true },
-      { name: 'White-labeling options', included: true },
-      { name: 'Custom feature development', included: true }
+      'All Personal features',
+      'Per-user billing (billed to team leader)',
+      'Team safety monitoring',
+      'Shared threat intelligence',
+      'Priority email & chat support',
+      'Devices protection per user',
+      'Team dashboard',
+      'Basic API access',
+      'Centralized billing'
     ],
-    buttonText: 'Contact Sales',
+    buttonText: 'Start Team Trial',
+    buttonVariant: 'outlined',
+    popular: false
+  },
+  {
+    title: 'Pay As You Go',
+    price: '$5',
+    period: 'month + tokens',
+    description: 'Flexible usage with token-based protection',
+    features: [
+      '$5 monthly base fee',
+      'Includes 100 tokens',
+      'Additional tokens at $0.05 each',
+      'Tokens never expire',
+      'Top up anytime',
+      'No long-term commitment',
+      'Ideal for custom users',
+      'Usage analytics dashboard'
+    ],
+    buttonText: 'Get Started',
     buttonVariant: 'outlined',
     popular: false
   }
@@ -165,6 +169,15 @@ const faqs = [
 const PricingPage = () => {
   const theme = useTheme();
   const [annual, setAnnual] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [cardData, setCardData] = useState({
+    cvc: '',
+    expiry: '',
+    focus: '',
+    name: '',
+    number: '',
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -172,6 +185,29 @@ const PricingPage = () => {
 
   const handleBillingChange = () => {
     setAnnual(!annual);
+  };
+
+  const handlePaymentSubmit = (e, plan) => {
+    e.preventDefault();
+    // Here you would typically process the payment with a payment gateway
+    console.log('Processing payment for plan:', plan.title, 'with card:', cardData);
+    alert(`Payment submitted for ${plan.title} plan!`);
+    setShowPaymentForm(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCardData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleInputFocus = (e) => {
+    setCardData(prev => ({
+      ...prev,
+      focus: e.target.name
+    }));
   };
 
   return (
@@ -283,161 +319,381 @@ const PricingPage = () => {
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="stretch">
             {plans.map((plan, index) => (
-              <Grid item xs={12} md={4} key={index} sx={{ display: 'flex' }}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  style={{ width: '100%', display: 'flex' }}
-                >
-                  <PricingCard popular={plan.popular} sx={{ width: '100%' }}>
-                    {plan.popular && (
-                      <Chip 
-                        label="Most Popular" 
-                        color="primary"
-                        size="small"
-                        sx={{ 
-                          position: 'absolute',
-                          top: -12,
-                          right: 24,
-                          fontWeight: 600
-                        }}
-                      />
-                    )}
-                    <CardHeader
-                      title={plan.title}
-                      subheader={plan.description}
-                      titleTypographyProps={{ variant: 'h5', fontWeight: 600 }}
-                      subheaderTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
-                      sx={{ pb: 0 }}
+              <Grid item xs={12} md={4} key={index}>
+                <PricingCard popular={plan.popular}>
+                  {plan.popular && (
+                    <Chip
+                      label="Most Popular"
+                      color="primary"
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        right: 16,
+                        top: 16,
+                        fontWeight: 600,
+                        boxShadow: theme.shadows[2]
+                      }}
                     />
-                    <CardContent sx={{ pt: 2, pb: 1, flexGrow: 1 }}>
-                      <Box sx={{ mb: 3 }}>
-                        <Typography variant="h3" component="p" sx={{ fontWeight: 700, display: 'inline' }}>
-                          {typeof plan.price[annual ? 'annual' : 'monthly'] === 'number' ? 
-                            `$${plan.price[annual ? 'annual' : 'monthly']}` : 
-                            plan.price[annual ? 'annual' : 'monthly']}
+                  )}
+                  <CardHeader
+                    title={
+                      <Typography variant="h5" component="h3" align="center" sx={{ fontWeight: 700, mb: 1 }}>
+                        {plan.title}
+                      </Typography>
+                    }
+                    subheader={
+                      <Typography variant="body1" color="text.secondary" align="center">
+                        {plan.description}
+                      </Typography>
+                    }
+                    sx={{ pb: 1 }}
+                  />
+                  <CardContent>
+                    <Box sx={{ textAlign: 'center', mb: 3 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', mb: 1 }}>
+                        <Typography variant="h3" component="div" sx={{ fontWeight: 800, color: 'primary.main' }}>
+                          {plan.price}
                         </Typography>
-                        {typeof plan.price[annual ? 'annual' : 'monthly'] === 'number' && (
-                          <Typography variant="body2" color="text.secondary" sx={{ display: 'inline', ml: 1 }}>
-                            /{annual ? 'mo (billed annually)' : 'month'}
+                        <Typography variant="h6" color="text.secondary" sx={{ ml: 1, fontWeight: 400 }}>
+                          {plan.period}
+                        </Typography>
+                      </Box>
+                      {plan.popular && (
+                        <Typography variant="caption" color="primary" sx={{ fontWeight: 500 }}>
+                          Most Popular Choice
+                        </Typography>
+                      )}
+                    </Box>
+                    <Divider sx={{ my: 3 }} />
+                    <Box sx={{ mb: 3 }}>
+                      {plan.features.map((feature, idx) => (
+                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                          <CheckCircleOutlineIcon 
+                            sx={{ 
+                              mr: 1.5, 
+                              color: 'success.main',
+                              fontSize: '1.1rem'
+                            }} 
+                          />
+                          <Typography variant="body2">
+                            {feature}
                           </Typography>
-                        )}
+                        </Box>
+                      ))}
+                    </Box>
+                  </CardContent>
+                  <CardActions sx={{ flexDirection: 'column', gap: 2 }}>
+                    {showPaymentForm && selectedPlan === plan.title ? (
+                      <Box component="form" onSubmit={(e) => handlePaymentSubmit(e, plan)} sx={{ width: '100%' }}>
+                        <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>Card Details</Typography>
+                          
+                          <TextField
+                            fullWidth
+                            label="Card Number"
+                            name="number"
+                            value={cardData.number}
+                            onChange={handleInputChange}
+                            onFocus={handleInputFocus}
+                            placeholder="1234 5678 9012 3456"
+                            margin="normal"
+                            required
+                            inputProps={{ maxLength: 19 }}
+                            sx={{ mb: 2 }}
+                          />
+                          
+                          <TextField
+                            fullWidth
+                            label="Name on Card"
+                            name="name"
+                            value={cardData.name}
+                            onChange={handleInputChange}
+                            onFocus={handleInputFocus}
+                            placeholder="JOHN DOE"
+                            margin="normal"
+                            required
+                            sx={{ mb: 2 }}
+                          />
+                          
+                          <Box sx={{ display: 'flex', gap: 2 }}>
+                            <TextField
+                              fullWidth
+                              label="Expiry Date"
+                              name="expiry"
+                              value={cardData.expiry}
+                              onChange={handleInputChange}
+                              onFocus={handleInputFocus}
+                              placeholder="MM/YY"
+                              inputProps={{ maxLength: 5 }}
+                              required
+                            />
+                            <TextField
+                              fullWidth
+                              label="CVC"
+                              name="cvc"
+                              value={cardData.cvc}
+                              onChange={handleInputChange}
+                              onFocus={handleInputFocus}
+                              placeholder="123"
+                              inputProps={{ maxLength: 4 }}
+                              required
+                            />
+                          </Box>
+                          
+                          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                            {['visa', 'mastercard', 'amex', 'discover'].map((type) => (
+                              <Box key={type} component="img" 
+                                src={`/src/assets/cards/${type}.svg`} 
+                                alt={type}
+                                sx={{ height: 24, opacity: 0.7, '&:hover': { opacity: 1 } }}
+                              />
+                            ))}
+                          </Box>
+                        </Box>
+                        
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                          <Button
+                            fullWidth
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setShowPaymentForm(false)}
+                            sx={{ py: 1.5, fontWeight: 600, borderRadius: 2 }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            fullWidth
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            sx={{ py: 1.5, fontWeight: 600, borderRadius: 2 }}
+                          >
+                            Pay ${plan.title === 'Personal' ? '9.99' : plan.title === 'Team' ? '29.99' : '5.00'}
+                          </Button>
+                        </Box>
                       </Box>
-                      
-                      <Divider sx={{ my: 2 }} />
-                      
-                      <Box sx={{ mt: 2 }}>
-                        {plan.features.map((feature, i) => (
-                          <FeatureItem key={i} included={feature.included}>
-                            {feature.included ? (
-                              <CheckCircleOutlineIcon fontSize="small" color="success" sx={{ mr: 1 }} />
-                            ) : (
-                              <CheckCircleOutlineIcon fontSize="small" color="disabled" sx={{ mr: 1 }} />
-                            )}
-                            <Typography variant="body2" sx={{ opacity: feature.included ? 1 : 0.6 }}>
-                              {feature.name}
-                            </Typography>
-                          </FeatureItem>
-                        ))}
-                      </Box>
-                    </CardContent>
-                    <CardActions sx={{ p: 3, pt: 0 }}>
-                      <Button 
-                        component={RouterLink}
-                        to={plan.title === 'Enterprise' ? '/contact' : '/signup'}
-                        variant={plan.buttonVariant} 
-                        color="primary" 
+                    ) : (
+                      <Button
                         fullWidth
-                        sx={{ py: 1.5 }}
+                        variant={plan.buttonVariant}
+                        color="primary"
+                        size="large"
+                        startIcon={<CreditCardIcon />}
+                        onClick={() => {
+                          setSelectedPlan(plan.title);
+                          setShowPaymentForm(true);
+                        }}
+                        sx={{
+                          py: 1.5,
+                          fontWeight: 600,
+                          borderRadius: 2,
+                          ...(plan.popular && {
+                            bgcolor: 'primary.main',
+                            color: 'primary.contrastText',
+                            '&:hover': {
+                              bgcolor: 'primary.dark',
+                            },
+                          }),
+                        }}
                       >
                         {plan.buttonText}
                       </Button>
-                    </CardActions>
-                  </PricingCard>
-                </motion.div>
+                    )}
+                  </CardActions>
+                </PricingCard>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
 
-      {/* Feature Comparison */}
+      {/* Protection For You & Your Family */}
       <Box sx={{ py: 10, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography variant="h3" component="h2" sx={{ mb: 2, fontWeight: 700 }}>
-              Compare Plan Features
+            <Typography variant="h3" component="h2" sx={{ mb: 3, fontWeight: 700 }}>
+              Protection For Every Member of Your Family
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
-              Find the plan that best suits your security needs with our detailed feature comparison.
+            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 4, fontWeight: 400 }}>
+              Whether you're securing your digital life or protecting your loved ones, Rica adapts to your family's needs.
             </Typography>
           </Box>
 
-          <Box sx={{ overflowX: 'auto' }}>
-            <Box sx={{ minWidth: 800, width: '100%' }}>
-              <Grid container>
-                {/* Header Row */}
-                <Grid item xs={4}>
-                  <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Features</Typography>
-                  </Box>
-                </Grid>
-                {plans.map((plan, index) => (
-                  <Grid item xs={8/3} key={index}>
+          <Grid container spacing={4} alignItems="stretch">
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <Card sx={{ height: '100%', p: 4, borderRadius: 4, boxShadow: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                     <Box sx={{ 
-                      p: 2, 
-                      borderBottom: `1px solid ${theme.palette.divider}`,
-                      bgcolor: plan.popular ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
-                      borderTop: plan.popular ? `2px solid ${theme.palette.primary.main}` : 'none'
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: '50%', 
+                      bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      mr: 3
                     }}>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>{plan.title}</Typography>
+                      <SecurityIcon color="primary" sx={{ fontSize: 32 }} />
                     </Box>
-                  </Grid>
-                ))}
-
-                {/* Feature Rows */}
-                {[
-                  { name: 'Browser Profiles', values: ['5 profiles', '20 profiles', 'Unlimited'] },
-                  { name: 'Threat Detection', values: ['Basic', 'Advanced', 'Custom'] },
-                  { name: 'Analytics', values: ['Standard', 'Real-time', 'Advanced'] },
-                  { name: 'API Access', values: ['100 calls/day', '1000 calls/day', 'Unlimited'] },
-                  { name: 'Support', values: ['8 hours email', '24/7 priority', 'Dedicated manager'] },
-                  { name: 'Team Members', values: ['3 users', '10 users', 'Unlimited'] },
-                  { name: 'Custom Dashboards', values: ['✕', '✓', '✓'] },
-                  { name: 'Vulnerability Scanning', values: ['✕', '✓', '✓'] },
-                  { name: 'Custom Integrations', values: ['✕', '✕', '✓'] },
-                  { name: 'On-premise Deployment', values: ['✕', '✕', '✓'] },
-                  { name: 'SLA Guarantees', values: ['✕', '✕', '✓'] },
-                ].map((feature, fIndex) => (
-                  <React.Fragment key={fIndex}>
-                    <Grid item xs={4}>
-                      <Box sx={{ 
-                        p: 2, 
-                        borderBottom: `1px solid ${theme.palette.divider}`,
-                        bgcolor: fIndex % 2 === 1 ? alpha(theme.palette.background.paper, 0.3) : 'transparent'
-                      }}>
-                        <Typography variant="body1">{feature.name}</Typography>
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 700 }}>
+                      For You
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                    Take control of your digital security with our Personal plan. Perfect for individuals who want comprehensive protection without the complexity.
+                  </Typography>
+                  <Box sx={{ mb: 4 }}>
+                    {[
+                      'Secure all your personal devices',
+                      'Protect your online identity',
+                      'Monitor your personal email accounts',
+                      'Get alerts about potential threats',
+                      '24/7 AI-powered protection',
+                      'Easy-to-use dashboard'
+                    ].map((item, index) => (
+                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                        <CheckCircleOutlineIcon sx={{ color: 'success.main', mr: 1.5, fontSize: '1.1rem' }} />
+                        <Typography variant="body2">{item}</Typography>
                       </Box>
-                    </Grid>
-                    {feature.values.map((value, vIndex) => (
-                      <Grid item xs={8/3} key={vIndex}>
-                        <Box sx={{ 
-                          p: 2, 
-                          borderBottom: `1px solid ${theme.palette.divider}`,
-                          bgcolor: fIndex % 2 === 1 ? alpha(theme.palette.background.paper, 0.3) : 'transparent',
-                          color: value === '✓' ? 'success.main' : value === '✕' ? 'text.disabled' : 'text.primary',
-                          fontWeight: plans[vIndex].popular ? 600 : 400
-                        }}>
-                          <Typography variant="body1">{value}</Typography>
-                        </Box>
-                      </Grid>
                     ))}
-                  </React.Fragment>
-                ))}
-              </Grid>
-            </Box>
+                  </Box>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    component={RouterLink}
+                    to="/signup"
+                    sx={{ mt: 'auto', py: 1.5, fontWeight: 600, borderRadius: 2 }}
+                  >
+                    Protect Yourself Today
+                  </Button>
+                </Card>
+              </motion.div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card sx={{ 
+                  height: '100%', 
+                  p: 4, 
+                  borderRadius: 4, 
+                  boxShadow: 3,
+                  border: `2px solid ${theme.palette.primary.main}`,
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ 
+                    position: 'absolute', 
+                    top: 0, 
+                    right: 0, 
+                    bgcolor: 'primary.main', 
+                    color: 'primary.contrastText',
+                    px: 2,
+                    py: 0.5,
+                    borderBottomLeftRadius: 8,
+                    fontSize: '0.75rem',
+                    fontWeight: 600
+                  }}>
+                    MOST POPULAR
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <Box sx={{ 
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: '50%', 
+                      bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      mr: 3
+                    }}>
+                      <FamilyRestroomIcon color="primary" sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 700 }}>
+                      For Your Family
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                    Keep your entire family safe online with our Family plan. Monitor and protect your children's digital lives while giving them the freedom to explore safely.
+                  </Typography>
+                  <Box sx={{ mb: 4 }}>
+                    {[
+                      'Protect up to 5 family members',
+                      'Monitor children\'s online activities',
+                      'Set screen time limits',
+                      'Block inappropriate content',
+                      'Get alerts about cyberbullying',
+                      'Family dashboard for parents'
+                    ].map((item, index) => (
+                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                        <CheckCircleOutlineIcon sx={{ color: 'success.main', mr: 1.5, fontSize: '1.1rem' }} />
+                        <Typography variant="body2">{item}</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    component={RouterLink}
+                    to="/signup"
+                    sx={{ 
+                      mt: 'auto', 
+                      py: 1.5, 
+                      fontWeight: 600, 
+                      borderRadius: 2,
+                      bgcolor: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.dark',
+                      },
+                    }}
+                  >
+                    Protect Your Family
+                  </Button>
+                </Card>
+              </motion.div>
+            </Grid>
+          </Grid>
+
+          <Box sx={{ mt: 8, textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+              All Your Devices, All Your Accounts - Protected
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
+              Connect all your family's devices and online accounts to Rica's protection network. Our AI works 24/7 to monitor, detect, and prevent threats before they become problems.
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              component={RouterLink}
+              to="/how-it-works"
+              sx={{ 
+                px: 4, 
+                py: 1.5, 
+                fontWeight: 600, 
+                borderRadius: 2,
+                '&:hover': {
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                },
+              }}
+            >
+              See How It Works
+            </Button>
           </Box>
         </Container>
       </Box>
