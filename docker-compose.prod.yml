@@ -21,7 +21,6 @@ services:
       - opencti
       - openbas
       - ollama
-      - code-server
     networks:
       - rica-network
 
@@ -42,30 +41,32 @@ services:
 
   # Rica API Service
   rica-api:
-    build: ./rica-api
+    build: 
+      context: ./rica-api
+      dockerfile: Dockerfile
     container_name: rica-api
     restart: always
+    ports:
+      - "3001:3001"
     environment:
       - NODE_ENV=production
-      - OPENCTI_GRAPHQL_URL=http://opencti:8080/graphql
-      - OPENBAS_API_URL=http://openbas:8080/api
       - OLLAMA_URL=http://ollama:11434
       - API_KEY=${API_KEY:-changeme_in_production}
-      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
     depends_on:
-      - opencti
-      - openbas
       - ollama
     networks:
       - rica-network
 
   # Rica UI
   rica-ui:
-    build: ./rica-ui
+    build: 
+      context: ./rica-ui
+      dockerfile: Dockerfile
     container_name: rica-ui
     restart: always
     ports:
-      - "80:80"
+      - "3000:80"
     environment:
       - NODE_ENV=production
       - REACT_APP_API_URL=http://localhost:3001
@@ -102,10 +103,20 @@ services:
       - RABBITMQ__USERNAME=guest
       - RABBITMQ__PASSWORD=guest
     depends_on:
-      - redis
-      - elasticsearch
-      - minio
-      - rabbitmq
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:4000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - rica-network
 
@@ -129,9 +140,18 @@ services:
       - JWT_SECRET=ChangeMeInProduction123!
       - CRON_TIMEZONE=UTC
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - rica-network
 
