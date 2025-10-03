@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { compression } from 'vite-plugin-compression';
+import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
@@ -11,11 +11,11 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       // Add compression for production builds
-      isProd && compression({
+      isProd && viteCompression({
         algorithm: 'gzip',
         ext: '.gz',
       }),
-      isProd && compression({
+      isProd && viteCompression({
         algorithm: 'brotliCompress',
         ext: '.br',
       }),
@@ -42,13 +42,10 @@ export default defineConfig(({ mode }) => {
     
     build: {
       outDir: 'dist',
-      minify: 'terser',
+      minify: 'esbuild',  // Use esbuild for faster builds (no extra dependencies needed)
       sourcemap: isProd ? false : true,  // No sourcemaps in production for security
-      terserOptions: {
-        compress: {
-          drop_console: isProd,  // Remove console.log in production
-          drop_debugger: isProd, // Remove debugger statements in production
-        },
+      esbuild: {
+        drop: isProd ? ['console', 'debugger'] : [],  // Remove console.log and debugger in production
       },
       // Split chunks for better caching
       rollupOptions: {
