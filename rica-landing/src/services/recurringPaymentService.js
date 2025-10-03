@@ -10,7 +10,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import paymentService from './paymentService';
+import paymentService from './paymentService.jsx';
 import paymentHistoryService from './paymentHistoryService';
 import subscriptionService from './subscriptionService';
 import analyticsService from './analyticsService';

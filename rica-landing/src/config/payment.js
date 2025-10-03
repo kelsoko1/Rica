@@ -10,8 +10,30 @@ export const clickPesaConfig = {
   // ClickPesa API key (replace with your actual key in production)
   apiKey: (window.env && window.env.REACT_APP_CLICKPESA_API_KEY) || 'IDNzCNDMk4Uj1OHqWXNBpgL7sFIebKnI',
   
+  // ClickPesa Client ID (replace with your actual client ID in production)
+  clientId: (window.env && window.env.REACT_APP_CLICKPESA_CLIENT_ID) || 'rica-client-id',
+  
   // ClickPesa API URL
-  apiUrl: 'https://api.clickpesa.com/v1',
+  apiUrl: 'https://api.clickpesa.com',
+  
+  // ClickPesa API endpoints
+  endpoints: {
+    generateToken: '/third-parties/auth/token',
+    previewUssdPush: '/third-parties/payments/preview-ussd-push-request',
+    initiateUssdPush: '/third-parties/payments/initiate-ussd-push-request',
+    checkPaymentStatus: '/third-parties/payments',
+    previewCardPayment: '/third-parties/payments/preview-card-payment',
+    initiateCardPayment: '/third-parties/payments/initiate-card-payment'
+  },
+  
+  // Collection account settings
+  collectionAccount: {
+    enabled: true,
+    accountName: 'Rica Payments',
+    accountDescription: 'Rica payment collection account',
+    webhookUrl: (window.env && window.env.REACT_APP_CLICKPESA_WEBHOOK_URL) || 'https://api.rica.io/webhooks/clickpesa',
+    callbackUrl: window.location.origin + '/payment/callback'
+  },
   
   // Supported currencies
   supportedCurrencies: ['tzs', 'kes', 'ugx', 'usd', 'eur', 'gbp'],

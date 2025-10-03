@@ -34,22 +34,6 @@ export default function LeftNav({collapsed, onToggle, className, onNavItemChange
       </div>
       
       <nav className="nav-items">
-        <button 
-          className={`nav-btn ${activeItem === 'browser' ? 'active' : ''} ${hoverItem === 'browser' ? 'hover' : ''}`} 
-          title="Swarm"
-          onClick={() => handleNavClick('browser')}
-          onMouseEnter={() => setHoverItem('browser')}
-          onMouseLeave={() => setHoverItem(null)}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M17.5 7.5H17.51" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {!collapsed && <span>Swarm</span>}
-        </button>
-
-
         
         <button 
           className={`nav-btn ${activeItem === 'devices' ? 'active' : ''} ${hoverItem === 'devices' ? 'hover' : ''}`} 

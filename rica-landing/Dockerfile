@@ -16,7 +16,7 @@ RUN npm ci
 COPY . .
 
 # Create production env.js file
-RUN echo "/**\n * Environment variables for browser\n * Generated during build process\n */\n\nwindow.env = {\n  NODE_ENV: 'production',\n  REACT_APP_API_URL: '${REACT_APP_API_URL:-/api}',\n  REACT_APP_CLICKPESA_API_KEY: '${REACT_APP_CLICKPESA_API_KEY}',\n  REACT_APP_ENCRYPTION_KEY: '${REACT_APP_ENCRYPTION_KEY}',\n  REACT_APP_ANALYTICS_KEY: '${REACT_APP_ANALYTICS_KEY}',\n  REACT_APP_SENTRY_DSN: '${REACT_APP_SENTRY_DSN}'\n};" > ./public/env.js
+RUN echo "/**\n * Environment variables for browser\n * Generated during build process\n */\n\nwindow.env = {\n  NODE_ENV: 'production',\n  REACT_APP_API_URL: '${REACT_APP_API_URL:-/api}',\n  REACT_APP_CLICKPESA_API_KEY: '${REACT_APP_CLICKPESA_API_KEY}',\n  REACT_APP_ENCRYPTION_KEY: '${REACT_APP_ENCRYPTION_KEY}',\n  REACT_APP_ANALYTICS_KEY: '${REACT_APP_ANALYTICS_KEY}',\n  REACT_APP_SENTRY_DSN: '${REACT_APP_SENTRY_DSN}',\n  // Firebase configuration\n  REACT_APP_FIREBASE_API_KEY: '${REACT_APP_FIREBASE_API_KEY}',\n  REACT_APP_FIREBASE_AUTH_DOMAIN: '${REACT_APP_FIREBASE_AUTH_DOMAIN}',\n  REACT_APP_FIREBASE_PROJECT_ID: '${REACT_APP_FIREBASE_PROJECT_ID}',\n  REACT_APP_FIREBASE_STORAGE_BUCKET: '${REACT_APP_FIREBASE_STORAGE_BUCKET}',\n  REACT_APP_FIREBASE_MESSAGING_SENDER_ID: '${REACT_APP_FIREBASE_MESSAGING_SENDER_ID}',\n  REACT_APP_FIREBASE_APP_ID: '${REACT_APP_FIREBASE_APP_ID}'\n};" > ./public/env.js
 
 # Build the application
 RUN npm run build

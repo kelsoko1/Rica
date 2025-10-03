@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ProfileManager.css';
-import BrowserLauncher from '../services/BrowserLauncher';
 import SocialAccountsGrid from './SocialAccountsGrid';
-import SwarmUI from './SwarmUI';
 import ErrorBoundary from './ErrorBoundary';
 
 const EMPTY_PROFILE = {
@@ -15,6 +13,42 @@ const EMPTY_PROFILE = {
   isShared: false,
   sharedWithTeams: [],
   status: 'inactive'
+};
+
+// Generate a random fingerprint for browser profiles
+const generateRandomFingerprint = () => {
+  const platforms = ['Win32', 'MacIntel', 'Linux x86_64'];
+  const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge'];
+  const languages = ['en-US', 'en-GB', 'es-ES', 'fr-FR', 'de-DE'];
+  const timezones = ['America/New_York', 'Europe/London', 'Asia/Tokyo', 'Australia/Sydney'];
+  const resolutions = [
+    { width: 1920, height: 1080 },
+    { width: 1366, height: 768 },
+    { width: 1440, height: 900 },
+    { width: 2560, height: 1440 }
+  ];
+  
+  const randomPlatform = platforms[Math.floor(Math.random() * platforms.length)];
+  const randomBrowser = browsers[Math.floor(Math.random() * browsers.length)];
+  const randomLanguage = languages[Math.floor(Math.random() * languages.length)];
+  const randomTimezone = timezones[Math.floor(Math.random() * timezones.length)];
+  const randomResolution = resolutions[Math.floor(Math.random() * resolutions.length)];
+  
+  return {
+    userAgent: `Mozilla/5.0 (${randomPlatform}) AppleWebKit/537.36 (KHTML, like Gecko) ${randomBrowser}/120.0.0.0 Safari/537.36`,
+    platform: randomPlatform,
+    language: randomLanguage,
+    timezone: randomTimezone,
+    screenResolution: `${randomResolution.width}x${randomResolution.height}`,
+    webglVendor: 'Intel Inc.',
+    webglRenderer: 'Intel Iris OpenGL Engine',
+    canvasNoise: Math.random().toString(36).substring(7),
+    audioNoise: Math.random().toString(36).substring(7),
+    hardwareConcurrency: Math.floor(Math.random() * 8) + 2,
+    deviceMemory: [2, 4, 8, 16][Math.floor(Math.random() * 4)],
+    colorDepth: 24,
+    pixelRatio: [1, 1.5, 2][Math.floor(Math.random() * 3)]
+  };
 };
 
 const ProfileManager = () => {
@@ -31,7 +65,6 @@ const ProfileManager = () => {
   const [activeProfiles, setActiveProfiles] = useState([]);
   const [automationTasks, setAutomationTasks] = useState([]);
   const [activeProfile, setActiveProfile] = useState(null);
-  const [showSwarmUI, setShowSwarmUI] = useState(false);
 
   const [newProfile, setNewProfile] = useState({
     name: '',
@@ -61,14 +94,10 @@ const ProfileManager = () => {
       const loadedProfiles = JSON.parse(savedProfiles);
       setProfiles(loadedProfiles);
       
-      // Check for running browsers and sync status
-      const runningProfiles = BrowserLauncher.getRunningProfiles();
-      setActiveProfiles(runningProfiles);
-      
-      // Update profile statuses based on running browsers
+      // Set all profiles as inactive on load
       const updatedProfiles = loadedProfiles.map(profile => ({
         ...profile,
-        status: runningProfiles.includes(profile.id) ? 'active' : 'inactive'
+        status: 'inactive'
       }));
       setProfiles(updatedProfiles);
     }
@@ -115,34 +144,17 @@ const ProfileManager = () => {
 
   const handleLaunchProfile = async (profile) => {
     try {
-      const success = await BrowserLauncher.launchProfile({
+      const updatedProfile = {
         ...profile,
-        startUrl: profile.socialAccounts.length > 0 ?
-          getSocialPlatformUrl(profile.socialAccounts[0].platform) :
-          profile.defaultStartUrl || 'about:blank'
-      });
-      
-      if (success) {
-        const updatedProfile = {
-          ...profile,
-          lastUsed: new Date().toISOString(),
-          status: 'active'
-        };
-        setProfiles(profiles.map(p => 
-          p.id === profile.id ? updatedProfile : p
-        ));
-        setActiveProfiles([...activeProfiles, profile.id]);
-        setActiveProfile(updatedProfile);
-        setShowSwarmUI(true);
-        // Force a re-render
-        setTimeout(() => {
-          document.querySelector('.profile-manager').style.display = 'none';
-          document.querySelector('.swarm-ui-container').style.display = 'flex';
-        }, 100);
-      } else {
-        console.error('Failed to launch browser profile');
-        alert('Failed to launch browser profile. Please check the console for details.');
-      }
+        lastUsed: new Date().toISOString(),
+        status: 'active'
+      };
+      setProfiles(profiles.map(p => 
+        p.id === profile.id ? updatedProfile : p
+      ));
+      setActiveProfiles([...activeProfiles, profile.id]);
+      setActiveProfile(updatedProfile);
+      alert('Profile "' + profile.name + '" launched successfully!');
     } catch (error) {
       console.error('Error launching profile:', error);
       alert('An error occurred while launching the profile.');
@@ -151,21 +163,14 @@ const ProfileManager = () => {
 
   const handleStopProfile = async (profile) => {
     try {
-      const success = await BrowserLauncher.stopProfile(profile.id);
-      
-      if (success) {
-        const updatedProfile = {
-          ...profile,
-          status: 'inactive'
-        };
-        setProfiles(profiles.map(p => 
-          p.id === profile.id ? updatedProfile : p
-        ));
-        setActiveProfiles(activeProfiles.filter(id => id !== profile.id));
-      } else {
-        console.error('Failed to stop browser profile');
-        alert('Failed to stop browser profile. Please check the console for details.');
-      }
+      const updatedProfile = {
+        ...profile,
+        status: 'inactive'
+      };
+      setProfiles(profiles.map(p => 
+        p.id === profile.id ? updatedProfile : p
+      ));
+      setActiveProfiles(activeProfiles.filter(id => id !== profile.id));
     } catch (error) {
       console.error('Error stopping profile:', error);
       alert('An error occurred while stopping the profile.');
@@ -200,17 +205,9 @@ const ProfileManager = () => {
     };
 
     try {
-      const success = await BrowserLauncher.launchProfile({
-        ...selectedProfile,
-        socialAccounts: [account],
-        automationTasks: [task]
-      });
-
-      if (success) {
-        alert(`${action} automation started successfully!`);
-      } else {
-        alert('Failed to start automation');
-      }
+      // Automation functionality removed with Swarm browser
+      alert(`${action} automation would start here (browser integration removed)`);
+      console.log('Automation task:', task);
     } catch (error) {
       console.error('Automation error:', error);
       alert('Error starting automation');
@@ -450,20 +447,12 @@ const ProfileManager = () => {
                 className="save-btn"
                 onClick={async () => {
                   try {
-                    const success = await BrowserLauncher.launchProfile({
-                      ...selectedProfile,
-                      socialAccounts: [selectedAccount],
-                      automationTasks
-                    });
-
-                    if (success) {
-                      alert('Post scheduled successfully!');
-                      setShowAutomationModal(false);
-                      setSelectedAccount(null);
-                      setAutomationTasks([]);
-                    } else {
-                      alert('Failed to schedule post');
-                    }
+                    // Browser automation removed with Swarm
+                    alert('Post scheduling functionality removed (browser integration removed)');
+                    console.log('Automation tasks:', automationTasks);
+                    setShowAutomationModal(false);
+                    setSelectedAccount(null);
+                    setAutomationTasks([]);
                   } catch (error) {
                     console.error('Scheduling error:', error);
                     alert('Error scheduling post');
@@ -481,11 +470,10 @@ const ProfileManager = () => {
   };
 
   const handleClose = () => {
-    if (showSwarmUI && activeProfile) {
+    if (activeProfile) {
       handleStopProfile(activeProfile);
     }
     // Reset all state
-    setShowSwarmUI(false);
     setActiveProfile(null);
     setSelectedProfile(null);
     setSelectedView('profiles');
@@ -502,7 +490,7 @@ const ProfileManager = () => {
 
   return (
     <ErrorBoundary>
-      <div className="profile-manager" style={{ display: showSwarmUI ? 'none' : 'flex' }}>
+      <div className="profile-manager">
         <div className="profile-manager-header">
           <div className="header-left">
             <div className="logo">🌐</div>
@@ -684,16 +672,7 @@ const ProfileManager = () => {
           </div>
         </div>
       </div>
-      
-      {/* SwarmUI container */}
-      {showSwarmUI && activeProfile && (
-        <div className="swarm-ui-container" style={{ display: showSwarmUI ? 'flex' : 'none', height: '100vh', width: '100%' }}>
-          <SwarmUI
-            profile={activeProfile}
-            onClose={handleClose}
-          />
-        </div>
-      )}
+
     </ErrorBoundary>
   );
 };

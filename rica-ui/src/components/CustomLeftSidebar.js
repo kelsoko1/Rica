@@ -20,21 +20,6 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
       
       <nav className="nav-items">
         <button 
-          className={`nav-btn ${activeItem === 'browser' ? 'active' : ''} ${hoverItem === 'browser' ? 'hover' : ''}`} 
-          title="Swarm"
-          onClick={() => handleNavClick('browser')}
-          onMouseEnter={() => setHoverItem('browser')}
-          onMouseLeave={() => setHoverItem(null)}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M17.5 7.5H17.51" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {!collapsed && <span>Swarm</span>}
-        </button>
-
-        <button 
           className={`nav-btn ${activeItem === 'project' ? 'active' : ''} ${hoverItem === 'project' ? 'hover' : ''}`} 
           title="Project Explorer"
           onClick={() => handleNavClick('project')}
@@ -100,6 +85,24 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
             <path d="M8.29431 16.7H8.30329" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           {!collapsed && <span>Fabric</span>}
+        </button>
+
+        <button 
+          className={`nav-btn ${activeItem === 'auto' ? 'active' : ''} ${hoverItem === 'auto' ? 'hover' : ''}`} 
+          title="Automation"
+          onClick={() => handleNavClick('auto')}
+          onMouseEnter={() => setHoverItem('auto')}
+          onMouseLeave={() => setHoverItem(null)}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8 12L10.5 14.5L16 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 2V6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 18V22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2 12H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M18 12H22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {!collapsed && <span>Auto</span>}
         </button>
 
         <button 

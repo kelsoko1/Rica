@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import AuthProvider from './context/AuthContext';
+import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
 import ClickPesaProvider from './context/ClickPesaContext';
 import schedulerService from './services/schedulerService';
+import integrationService from './services/integrationService';
 import config from './config/environment';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Routes, Route } from 'react-router-dom';
@@ -21,6 +22,7 @@ import PaymentHistoryPage from './pages/PaymentHistoryPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import RecurringPaymentsPage from './pages/RecurringPaymentsPage';
+import CreditsPage from './pages/CreditsPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -117,10 +119,14 @@ const darkTheme = createTheme({
 });
 
 const App = () => {
-  // Initialize scheduler service
+  // Initialize services
   useEffect(() => {
     // Initialize scheduler for recurring payments
     schedulerService.initializeScheduler();
+    
+    // Initialize integration with rica-ui
+    // Integration service will get the real user ID from Firebase when a user logs in
+    integrationService.initializeIntegration();
     
     // Log initialization in production
     if (config.isProd) {
@@ -135,7 +141,7 @@ const App = () => {
   }, []);
   return (
     <ErrorBoundary>
-      <AuthProvider>
+      <FirebaseAuthProvider>
         <ClickPesaProvider>
           <ThemeProvider theme={darkTheme}>
               <CssBaseline />
@@ -196,13 +202,18 @@ const App = () => {
                   <RecurringPaymentsPage />
                 </ProtectedRoute>
               } />
+              <Route path="/credits" element={
+                <ProtectedRoute>
+                  <CreditsPage />
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
           <Footer />
               </div>
           </ThemeProvider>
         </ClickPesaProvider>
-      </AuthProvider>
+      </FirebaseAuthProvider>
     </ErrorBoundary>
   );
 }

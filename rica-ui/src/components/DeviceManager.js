@@ -12,8 +12,8 @@ const DeviceManager = () => {
   const [isCollecting, setIsCollecting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [settings, setSettings] = useState({
-    openCTIEndpoint: 'http://localhost:4000/graphql',
-    openBASEndpoint: 'http://localhost:3000/api/injects',
+    openCTIEndpoint: 'http://localhost:2020/graphql',
+    openBASEndpoint: 'http://localhost:2021/api/injects',
     discoveryInterval: 60,
     dataCollectionInterval: 300
   });

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading } = useFirebaseAuth();
   const location = useLocation();
 
   if (loading) {

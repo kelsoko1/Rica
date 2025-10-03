@@ -1,4 +1,6 @@
 // API service for authentication and other requests
+import { auth } from '../config/firebase';
+import firebaseAuthService from '../services/firebaseAuthService';
 
 // Base URL for API requests
 const API_URL = (window.env && window.env.NODE_ENV === 'production')
@@ -21,30 +23,33 @@ const handleResponse = async (response) => {
 export const authService = {
   // Login user
   login: async (email, password) => {
-    // In a real application, this would make an API call
-    // For demo purposes, we'll simulate a successful login
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Check credentials (simple validation for demo)
-    if (!email || !password) {
-      return Promise.reject('Email and password are required');
+    try {
+      // Check credentials
+      if (!email || !password) {
+        return Promise.reject('Email and password are required');
+      }
+      
+      // Use Firebase authentication
+      const userCredential = await firebaseAuthService.signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      
+      // Get ID token
+      const token = await user.getIdToken();
+      
+      // Return user and token
+      return { 
+        user: {
+          id: user.uid,
+          email: user.email,
+          name: user.displayName || email.split('@')[0],
+          role: 'user',
+          avatar: user.photoURL
+        }, 
+        token 
+      };
+    } catch (error) {
+      return Promise.reject(error.message || 'Login failed');
     }
-    
-    // Create a mock user and token
-    const user = {
-      id: 'user-123',
-      email,
-      name: email.split('@')[0],
-      role: 'Security Analyst',
-      avatar: null
-    };
-    
-    const token = 'mock-jwt-token-' + Math.random().toString(36).substring(2);
-    
-    // Return mock response
-    return { user, token };
   },
   
   // Register new user

@@ -12,7 +12,7 @@ const OpenBASFrame = () => {
   return (
     <div className="iframe-container" style={{ width: '100%', height: '100%' }}>
       <iframe 
-        src="http://localhost:3000" 
+        src="http://localhost:2021" 
         title="OpenBAS" 
         style={frameStyle}
         allowFullScreen

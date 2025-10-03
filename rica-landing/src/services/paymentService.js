@@ -2,10 +2,14 @@ import { clickPesaConfig } from '../config/payment';
 import paymentHistoryService from './paymentHistoryService';
 import analyticsService from './analyticsService';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 // Get configuration from config files
 const CLICKPESA_API_KEY = clickPesaConfig.apiKey;
+const CLICKPESA_CLIENT_ID = clickPesaConfig.clientId;
 const CLICKPESA_API_URL = clickPesaConfig.apiUrl;
+const CLICKPESA_ENDPOINTS = clickPesaConfig.endpoints;
+const COLLECTION_ACCOUNT = clickPesaConfig.collectionAccount;
 
 /**
  * Global Payment Service
@@ -18,7 +22,115 @@ const CLICKPESA_API_URL = clickPesaConfig.apiUrl;
 const paymentService = {
 
   /**
-   * Create a payment using the global payment system
+   * Generate an authentication token for ClickPesa API
+   * 
+   * @returns {Promise<string>} Authentication token
+   */
+  generateAuthToken: async () => {
+    try {
+      const response = await axios.post(`${CLICKPESA_API_URL}${CLICKPESA_ENDPOINTS.generateToken}`, {
+        clientId: CLICKPESA_CLIENT_ID,
+        apiKey: CLICKPESA_API_KEY
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.data && response.data.token) {
+        // Store token in localStorage with expiration
+        const expiresAt = new Date().getTime() + (response.data.expiresIn * 1000);
+        localStorage.setItem('clickpesa_token', response.data.token);
+        localStorage.setItem('clickpesa_token_expires', expiresAt.toString());
+        return response.data.token;
+      } else {
+        throw new Error('Failed to generate authentication token');
+      }
+    } catch (error) {
+      console.error('Error generating ClickPesa auth token:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Get a valid authentication token (generates a new one if expired)
+   * 
+   * @returns {Promise<string>} Valid authentication token
+   */
+  getAuthToken: async () => {
+    const token = localStorage.getItem('clickpesa_token');
+    const expiresAt = localStorage.getItem('clickpesa_token_expires');
+    
+    if (!token || !expiresAt || new Date().getTime() > parseInt(expiresAt)) {
+      // Token is missing or expired, generate a new one
+      return await paymentService.generateAuthToken();
+    }
+    
+    return token;
+  },
+
+  /**
+   * Preview a USSD push request before initiating payment
+   * 
+   * @param {number} amount - Payment amount
+   * @param {string} phoneNumber - Phone number for mobile money payments
+   * @param {string} reference - Payment reference
+   * @param {string} currency - Currency code (default: TZS)
+   * @returns {Promise<Object>} Preview response
+   */
+  previewUssdPushRequest: async (amount, phoneNumber, reference, currency = 'TZS') => {
+    try {
+      // Validate input parameters
+      if (!amount || isNaN(amount) || amount <= 0) {
+        throw new Error('Invalid amount. Amount must be a positive number.');
+      }
+      
+      if (!reference) {
+        reference = `RICA-${Date.now()}-${uuidv4().substring(0, 8)}`;
+      }
+      
+      // Validate phone number format
+      if (!phoneNumber || !phoneNumber.match(/^\+?\d{1,15}$/)) {
+        throw new Error('Invalid phone number format. Use E.164 format (e.g., +255712345678 or 255712345678)');
+      }
+      
+      // Remove + sign if present
+      if (phoneNumber.startsWith('+')) {
+        phoneNumber = phoneNumber.substring(1);
+      }
+      
+      // Get auth token
+      const token = await paymentService.getAuthToken();
+      
+      // Prepare request payload
+      const payload = {
+        amount: amount.toString(),
+        currency: currency,
+        orderReference: reference,
+        phoneNumber: phoneNumber
+      };
+      
+      // Call ClickPesa API
+      const response = await axios.post(
+        `${CLICKPESA_API_URL}${CLICKPESA_ENDPOINTS.previewUssdPush}`,
+        payload,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error previewing USSD push request:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create a payment using the ClickPesa collection account
    * 
    * @param {number} amount - Payment amount
    * @param {string} phoneNumber - Phone number for mobile money payments
@@ -42,122 +154,121 @@ const paymentService = {
         reference = `RICA-${Date.now()}-${uuidv4().substring(0, 8)}`;
       }
       
-      // Validate phone number format for mobile money payments
-      if (paymentMethod === 'mobile_money') {
-        if (!phoneNumber || !phoneNumber.match(/^\+\d{1,15}$/)) {
-          throw new Error('Invalid phone number format. Use E.164 format (e.g., +255123456789)');
+      // Determine currency based on phone number prefix
+      let currency = 'TZS';
+      
+      if (phoneNumber) {
+        // Remove + sign if present
+        if (phoneNumber.startsWith('+')) {
+          phoneNumber = phoneNumber.substring(1);
         }
-      }
-      
-      // In a real application, this would be a server-side call to ClickPesa API
-      // For demo purposes, we'll simulate a successful response, but include real API structure
-      
-      // Determine currency and provider based on phone number prefix or payment method
-      let currency, provider;
-      
-      if (paymentMethod === 'mobile_money') {
-        // For mobile money, determine currency and provider based on phone number
-        currency = phoneNumber.startsWith('+255') ? 'TZS' : 
-                  phoneNumber.startsWith('+254') ? 'KES' : 
-                  phoneNumber.startsWith('+256') ? 'UGX' : 'TZS';
         
-        provider = phoneNumber.startsWith('+255') ? 'MPESA' : 
-                  phoneNumber.startsWith('+254') ? 'MPESA_KE' : 
-                  phoneNumber.startsWith('+256') ? 'MTN_UG' : 'UNKNOWN';
-      } else {
-        // For card or wallet payments, use USD as default currency
-        currency = 'USD';
-        provider = paymentMethod.toUpperCase();
-      }
-      
-      // Prepare request payload according to ClickPesa API docs
-      const payload = {
-        amount: amount.toString(),
-        currency,
-        reference: reference,
-        description: description,
-        callback_url: window.location.origin + '/payment/callback',
-        webhook_url: 'https://api.rica.io/webhooks/clickpesa', // Would be your server endpoint
-        client_id: CLICKPESA_API_KEY,
-        payment_method: paymentMethod
-      };
-      
-      // Add phone number for mobile money payments
-      if (paymentMethod === 'mobile_money') {
-        payload.phone = phoneNumber;
-      }
-      
-      console.log('ClickPesa payment request:', payload);
-      
-      // For demo, simulate API call
-      // In production, this would be:
-      // const response = await axios.post(`${CLICKPESA_API_URL}/payments/mobile-money/charge`, payload, {
-      //   headers: {
-      //     'Authorization': `Bearer ${CLICKPESA_API_KEY}`,
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      // Create transaction ID
-      const transactionId = `CP${Date.now()}`;
-      
-      // Create payment response
-      const paymentResponse = {
-        success: true,
-        transactionId,
-        amount,
-        phoneNumber,
-        currency,
-        status: 'PENDING',
-        message: 'Payment request sent successfully. Please check your phone to complete the payment.',
-        reference,
-        created: new Date().toISOString(),
-        provider
-      };
-      
-      // Add to payment history
-      paymentHistoryService.addPaymentToHistory({
-        transactionId,
-        amount,
-        currency,
-        status: 'PENDING',
-        phoneNumber: paymentMethod === 'mobile_money' ? phoneNumber : undefined,
-        provider,
-        paymentMethod,
-        description,
-        reference
-      });
-      
-      // Track analytics event with detailed information
-      analyticsService.trackPaymentStarted({
-        transactionId,
-        amount,
-        currency,
-        paymentMethod,
-        provider,
-        phoneNumber: paymentMethod === 'mobile_money' ? phoneNumber : undefined,
-        description,
-        reference,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        paymentDetails: {
-          method: paymentMethod,
-          provider: provider,
-          currency: currency
+        // Set currency based on country code
+        if (phoneNumber.startsWith('255')) {
+          currency = 'TZS'; // Tanzania
+        } else if (phoneNumber.startsWith('254')) {
+          currency = 'KES'; // Kenya
+        } else if (phoneNumber.startsWith('256')) {
+          currency = 'UGX'; // Uganda
         }
-      });
+      }
       
-      return paymentResponse;
+      // For mobile money payments, use USSD push
+      if (paymentMethod === 'mobile_money') {
+        try {
+          // First preview the request
+          const previewResponse = await paymentService.previewUssdPushRequest(
+            amount,
+            phoneNumber,
+            reference,
+            currency
+          );
+          
+          console.log('USSD push preview response:', previewResponse);
+          
+          // Get auth token
+          const token = await paymentService.getAuthToken();
+          
+          // Prepare request payload for initiating payment
+          const payload = {
+            amount: amount.toString(),
+            currency: currency,
+            orderReference: reference,
+            phoneNumber: phoneNumber
+          };
+          
+          // Call ClickPesa API to initiate payment
+          const response = await axios.post(
+            `${CLICKPESA_API_URL}${CLICKPESA_ENDPOINTS.initiateUssdPush}`,
+            payload,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          
+          // Create payment response
+          const paymentResponse = {
+            success: true,
+            transactionId: response.data.id,
+            amount,
+            phoneNumber,
+            currency,
+            status: response.data.status,
+            message: 'Payment request sent successfully. Please check your phone to complete the payment.',
+            reference: response.data.orderReference,
+            created: response.data.createdAt,
+            provider: response.data.channel
+          };
+          
+          // Add to payment history
+          paymentHistoryService.addPaymentToHistory({
+            transactionId: response.data.id,
+            amount,
+            currency,
+            status: response.data.status,
+            phoneNumber,
+            provider: response.data.channel,
+            paymentMethod,
+            description,
+            reference: response.data.orderReference
+          });
+          
+          // Track analytics event
+          analyticsService.trackPaymentStarted({
+            transactionId: response.data.id,
+            amount,
+            currency,
+            paymentMethod,
+            provider: response.data.channel,
+            phoneNumber,
+            description,
+            reference: response.data.orderReference,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+          });
+          
+          return paymentResponse;
+        } catch (error) {
+          console.error('Error creating USSD push payment:', error);
+          throw error;
+        }
+      } else if (paymentMethod === 'card') {
+        // For card payments, implement card payment flow
+        // This would be similar to the USSD push flow but using the card payment endpoints
+        throw new Error('Card payment method not implemented yet');
+      } else {
+        throw new Error(`Unsupported payment method: ${paymentMethod}`);
+      }
     } catch (error) {
       console.error('Error creating ClickPesa payment:', error);
       
       // Track error with detailed information
       analyticsService.trackPaymentFailed({
         amount,
-        currency: currency || 'USD',
+        currency: currency || 'TZS',
         phoneNumber: paymentMethod === 'mobile_money' ? phoneNumber : undefined,
         paymentMethod,
         description,
@@ -180,82 +291,51 @@ const paymentService = {
    */
   checkClickPesaPaymentStatus: async (transactionId) => {
     try {
-      // In a real application, this would be a server-side call to ClickPesa API
-      // For demo purposes, we'll simulate a successful response but include real API structure
-      
-      // Get existing payment from history
-      const existingPayment = paymentHistoryService.getPaymentById(transactionId);
-      
-      if (!existingPayment) {
-        throw new Error('Payment not found');
+      if (!transactionId) {
+        throw new Error('Transaction ID is required');
       }
       
-      // Prepare request payload according to ClickPesa API docs
-      const payload = {
-        transaction_id: transactionId,
-        client_id: CLICKPESA_API_KEY
-      };
+      // Get auth token
+      const token = await paymentService.getAuthToken();
       
-      console.log('ClickPesa status check request:', payload);
-      
-      // For demo, simulate API call
-      // In production, this would be:
-      // const response = await axios.post(`${CLICKPESA_API_URL}/payments/status`, payload, {
-      //   headers: {
-      //     'Authorization': `Bearer ${CLICKPESA_API_KEY}`,
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // For demo purposes, we'll use a more predictable status progression
-      // In a real implementation, this would come from the API response
-      const now = new Date().getTime();
-      const transactionTime = parseInt(transactionId.replace('CP', ''));
-      const elapsedSeconds = (now - transactionTime) / 1000;
-      
-      // Determine status based on elapsed time (for demo purposes)
-      let status;
-      if (elapsedSeconds < 30) {
-        status = 'PENDING';
-      } else if (elapsedSeconds < 60) {
-        // 80% chance of success, 20% chance of failure after 30 seconds
-        status = Math.random() < 0.8 ? 'COMPLETED' : 'FAILED';
-      } else {
-        status = 'COMPLETED';
-      }
-      
-      // Create provider reference
-      const providerReference = `M${Math.floor(Math.random() * 1000000000)}`;
-      
-      // Create status response
-      const statusResponse = {
-        transactionId,
-        status,
-        message: status === 'COMPLETED' 
-          ? 'Payment completed successfully' 
-          : status === 'PENDING' 
-            ? 'Payment is still being processed' 
-            : 'Payment failed',
-        updated: new Date().toISOString(),
-        details: {
-          amount: existingPayment.amount.toString(),
-          currency: existingPayment.currency || 'TZS',
-          provider: existingPayment.provider || 'MPESA',
-          provider_reference: providerReference,
-          client_reference: transactionId
+      // Call ClickPesa API to check payment status
+      const response = await axios.get(
+        `${CLICKPESA_API_URL}${CLICKPESA_ENDPOINTS.checkPaymentStatus}/${transactionId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      };
+      );
       
-      // Update payment history
-      paymentHistoryService.updatePaymentStatus(transactionId, status, {
-        provider_reference: providerReference,
-        message: statusResponse.message
-      });
-      
-      // Track analytics event based on status with detailed information
+      // If API call fails, fall back to local payment history
+      if (!response.data) {
+        const existingPayment = paymentHistoryService.getPaymentById(transactionId);
+        
+        if (!existingPayment) {
+          throw new Error('Payment not found');
+        }
+        
+        return {
+          success: true,
+          transactionId: existingPayment.transactionId,
+          status: existingPayment.status,
+          amount: existingPayment.amount,
+          currency: existingPayment.currency,
+        };
+        
+        // Add to payment history
+        paymentHistoryService.addPaymentToHistory({
+          transactionId: response.data.id,
+          amount,
+          currency,
+          status: response.data.status,
+          phoneNumber,
+          provider: response.data.channel,
+          paymentMethod,
+          description,
+          reference: response.data.orderReference
       if (status === 'COMPLETED') {
         analyticsService.trackPaymentCompleted({
           transactionId,

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import paymentService from '../services/paymentService';
+import paymentService from "../services/paymentService.jsx";
 import { clickPesaConfig } from '../config/payment';
 
 // Create a context for ClickPesa

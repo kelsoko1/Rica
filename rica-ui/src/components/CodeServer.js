@@ -3,7 +3,7 @@ import './CodeServer.css';
 
 const CodeServer = () => {
   // Replace this URL with your actual code-server URL
-  const codeServerUrl = 'http://localhost:8080';
+  const codeServerUrl = 'http://localhost:2023';
 
   return (
     <div className="code-server-container">

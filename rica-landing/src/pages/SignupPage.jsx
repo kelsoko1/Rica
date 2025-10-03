@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
@@ -69,7 +69,7 @@ const steps = ['Account Details', 'Personal Information', 'Payment Information']
 const SignupPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { signup, currentUser, error: authError } = useAuth();
+  const { register, loginWithGoogle, currentUser, error: authError } = useFirebaseAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -216,7 +216,17 @@ const SignupPage = () => {
       if (activeStep === steps.length - 1) {
         // Submit form and register user
         try {
-          await signup(formData);
+          // Create user data object for Firebase
+          const userData = {
+            displayName: `${formData.firstName} ${formData.lastName}`,
+            company: formData.company,
+            jobTitle: formData.jobTitle,
+            plan: formData.plan
+          };
+          
+          // Register user with Firebase
+          await register(formData.email, formData.password, userData);
+          
           // Show success message
           setSignupError('');
           setSignupSuccess(true);

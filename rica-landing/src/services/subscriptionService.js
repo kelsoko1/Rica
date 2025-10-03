@@ -52,18 +52,17 @@ export const subscriptionPlans = {
   payAsYouGo: {
     id: 'payAsYouGo',
     name: 'Pay As You Go',
-    description: 'Flexible usage with token-based protection',
+    description: 'Flexible usage with credit-based protection',
     price: {
-      monthly: 5, // Base fee
-      tokens: 100, // Tokens included in base fee
-      additionalTokenPrice: 0.05 // Price per additional token
+      monthly: 0, // No base fee
+      creditRate: 0.04 // $0.04 per credit ($10 for 250 credits)
     },
     features: [
-      '$5 monthly base fee',
-      'Includes 100 tokens',
-      'Additional tokens at $0.05 each',
-      'Tokens never expire',
-      'Top up anytime',
+      'No monthly base fee',
+      'Pay only for what you use',
+      'Credits at $10 for 250',
+      'Credits never expire',
+      'Buy credits anytime',
       'No long-term commitment',
       'Ideal for custom needs',
       'Usage analytics dashboard'

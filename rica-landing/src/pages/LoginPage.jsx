@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -61,7 +61,7 @@ const GradientBox = styled(Box)(({ theme }) => ({
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { login, currentUser, error: authError } = useAuth();
+  const { login, loginWithGoogle, currentUser, error: authError } = useFirebaseAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -147,6 +147,24 @@ const LoginPage = () => {
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+  
+  const handleGoogleSignIn = async () => {
+    setIsSubmitting(true);
+    setLoginError('');
+    
+    try {
+      // Call Google login function from Firebase auth context
+      await loginWithGoogle();
+      
+      // Set login success state
+      setLoginSuccess(true);
+      setLoginError('');
+    } catch (error) {
+      setLoginError(error.message || 'Google login failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // If login was successful, show success message
@@ -341,8 +359,13 @@ const LoginPage = () => {
             
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
-                <SocialButton fullWidth startIcon={<GoogleIcon />}>
-                  Google
+                <SocialButton 
+                  fullWidth 
+                  startIcon={<GoogleIcon />} 
+                  onClick={handleGoogleSignIn}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Signing in...' : 'Google'}
                 </SocialButton>
               </Grid>
               <Grid item xs={12} sm={4}>

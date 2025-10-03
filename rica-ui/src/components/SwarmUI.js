@@ -2,17 +2,33 @@ import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import './SwarmUI.css';
 import ErrorBoundary from './ErrorBoundary';
 import { trackEvent } from '../services/analyticsService';
+import { FaGlobe, FaUsers, FaCog, FaSignOutAlt, FaSearch, FaSync, FaFilter, FaPlus, FaPlay, FaCopy, FaTrash, FaEdit, FaTimes, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 
 const SwarmUI = ({ profile, onClose }) => {
-  const [tabs, setTabs] = useState([]);
-  const [activeTabId, setActiveTabId] = useState(null);
+  // Navigation and view state
+  const [activeView, setActiveView] = useState('browsers');
+  const [activeTab, setActiveTab] = useState('profiles');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Profile management state
+  const [profiles, setProfiles] = useState([]);
+  const [selectedProfiles, setSelectedProfiles] = useState([]);
+  const [runningProfiles, setRunningProfiles] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(null);
+  
+  // Browser session state
+  const [activeBrowserSession, setActiveBrowserSession] = useState(null);
+  const [browserTabs, setBrowserTabs] = useState([]);
+  const [activeBrowserTabId, setActiveBrowserTabId] = useState(null);
   const [urlInput, setUrlInput] = useState('');
+  
+  // UI state
   const [isLoading, setIsLoading] = useState(false);
-  const [iframeKey, setIframeKey] = useState(0);
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connected');
   const iframeRef = useRef(null);
-  const tabsRef = useRef(tabs);
 
   // Keep tabsRef in sync with tabs state
   useEffect(() => {

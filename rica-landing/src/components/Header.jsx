@@ -148,7 +148,7 @@ const Header = () => {
               <ListItemText primary="Go to Dashboard" sx={{ color: 'white' }} />
             </ListItem>
             <ListItem 
-              button
+              button 
               component={RouterLink}
               to="/profile"
               onClick={handleDrawerToggle}
@@ -180,6 +180,15 @@ const Header = () => {
                   </Typography>
                 </Box>
               </Box>
+            </ListItem>
+            <ListItem 
+              button 
+              component={RouterLink}
+              to="/credits"
+              onClick={handleDrawerToggle}
+              sx={{ mb: 1 }}
+            >
+              <ListItemText primary="Credits" />
             </ListItem>
             <ListItem 
               button 
@@ -339,6 +348,21 @@ const Header = () => {
                       color="inherit"
                     >
                       Log Out
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.35 }}
+                  >
+                    <Button 
+                      component={RouterLink} 
+                      to="/credits"
+                      variant="text" 
+                      color="inherit"
+                      sx={{ mr: 1 }}
+                    >
+                      Credits
                     </Button>
                   </motion.div>
                   <Box 

@@ -253,8 +253,8 @@ export default function StarrySidebar({open, onClose, currentFile, onFileEdit}){
     }
   };
   
-  // Use a suggestion
-  const useSuggestion = (suggestion) => {
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
     setVal(suggestion);
   };
 
@@ -337,7 +337,7 @@ export default function StarrySidebar({open, onClose, currentFile, onFileEdit}){
               <button 
                 key={index} 
                 className="starry-suggestion" 
-                onClick={() => useSuggestion(suggestion)}
+                onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion}
               </button>

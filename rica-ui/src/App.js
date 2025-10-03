@@ -3,9 +3,9 @@ import LeftNav from './components/LeftNav';
 
 
 import ThreatDashboard from './components/ThreatDashboard';
-import BrowserTabs from './components/BrowserTabs';
 import SimsFrame from './components/SimsFrame';
 import FabricFrame from './components/FabricFrame';
+import AutoFrame from './components/AutoFrame';
 import TeamsManager from './components/TeamsManager';
 import TopMenuResizer from './components/TopMenuResizer';
 import CustomLeftSidebar from './components/CustomLeftSidebar';
@@ -156,11 +156,10 @@ export default function App(){
             </div>
           ) : (
             <div className="workspace-content-container">
-              {activeNavItem === 'browser' && <BrowserTabs className="browser-tabs fade-in" />}
-
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
               {activeNavItem === 'sims' && <SimsFrame className="sims-frame fade-in" />}
               {activeNavItem === 'fabric' && <FabricFrame className="fabric-frame fade-in" />}
+              {activeNavItem === 'auto' && <AutoFrame className="auto-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
             </div>
           )}

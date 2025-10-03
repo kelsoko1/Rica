@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import PersonIcon from '@mui/icons-material/Person';
 import SecurityIcon from '@mui/icons-material/Security';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -72,7 +72,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 const UserProfile = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout } = useFirebaseAuth();
   const [activeSection, setActiveSection] = useState('personal');
   const [editMode, setEditMode] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);

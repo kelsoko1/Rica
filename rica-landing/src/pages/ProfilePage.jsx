@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Container, Breadcrumbs, Link, Button } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import UserProfile from '../components/UserProfile';
 
 const ProfilePage = () => {
-  const { currentUser } = useAuth();
+  const { currentUser } = useFirebaseAuth();
   
   useEffect(() => {
     window.scrollTo(0, 0);

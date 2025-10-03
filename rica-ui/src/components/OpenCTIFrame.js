@@ -12,7 +12,7 @@ const OpenCTIFrame = () => {
   return (
     <div className="iframe-container" style={{ width: '100%', height: '100%' }}>
       <iframe 
-        src="http://localhost:4000" 
+        src="http://localhost:2020" 
         title="OpenCTI" 
         style={frameStyle}
         allowFullScreen

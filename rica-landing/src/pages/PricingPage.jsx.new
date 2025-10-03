@@ -1,0 +1,256 @@
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import {
+  Box,
+  Container,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useTheme,
+  alpha
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import SecurityIcon from '@mui/icons-material/Security';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+
+import HybridSubscriptionManager from '../components/subscriptions/HybridSubscriptionManager';
+
+const GradientBox = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  width: '60%',
+  height: '60%',
+  borderRadius: '50%',
+  filter: 'blur(100px)',
+  zIndex: -1,
+  opacity: 0.15,
+}));
+
+// Updated FAQs to include hybrid model questions
+const faqs = [
+  {
+    question: 'How does the hybrid pricing model work?',
+    answer: 'Our hybrid pricing model combines traditional subscriptions with a flexible credit system. You can choose a subscription plan for core features and predictable costs, then use credits for additional features or increased usage as needed. This gives you the best of both worlds: predictable base costs with the flexibility to scale up when necessary.'
+  },
+  {
+    question: 'What is included in the free trial?',
+    answer: 'Our 14-day free trial includes full access to all features of the selected subscription plan with no restrictions. You can create browser profiles, use threat detection capabilities, access analytics, and explore all available features. No credit card is required to start your trial.'
+  },
+  {
+    question: 'Do credits expire?',
+    answer: 'No, credits never expire as long as your account remains active. You can purchase credits in bulk and use them at your own pace without worrying about expiration dates.'
+  },
+  {
+    question: 'Can I combine a subscription with credits?',
+    answer: 'Yes, that\'s the beauty of our hybrid model! You can have an active subscription for core features and also purchase credits for additional features or increased usage. This gives you maximum flexibility to optimize your costs based on your actual needs.'
+  },
+  {
+    question: 'Can I change plans later?',
+    answer: 'Yes, you can upgrade or downgrade your subscription plan at any time. When upgrading, you\'ll be charged the prorated difference for the remainder of your billing period. When downgrading, the new lower rate will apply at the start of your next billing cycle.'
+  },
+  {
+    question: 'What payment methods do you accept?',
+    answer: 'We accept all major credit cards (Visa, Mastercard, American Express, Discover), PayPal, mobile money payments, and digital wallets. For Enterprise customers, we also offer invoicing with net-30 payment terms.'
+  },
+  {
+    question: 'Is there a limit to how many credits I can purchase?',
+    answer: 'There is no limit to the number of credits you can purchase. We offer volume discounts for larger credit packages, making it more economical to buy in bulk if you anticipate higher usage.'
+  },
+  {
+    question: 'Can I cancel my subscription at any time?',
+    answer: 'Yes, you can cancel your subscription at any time from your account settings. If you cancel, you\'ll still have access to your plan until the end of your current billing period. We don\'t offer refunds for partial months.'
+  },
+  {
+    question: 'How secure is my data with Rica?',
+    answer: 'Rica employs industry-leading security measures including end-to-end encryption, secure data storage, regular security audits, and compliance with major security standards. Your data is stored in SOC 2 compliant data centers and is never shared with third parties.'
+  }
+];
+
+const PricingPage = () => {
+  const theme = useTheme();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <Container maxWidth="lg">
+      {/* Header Section */}
+      <Box sx={{ 
+        textAlign: 'center', 
+        py: 8, 
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <GradientBox sx={{ 
+          background: 'radial-gradient(circle, #4f46e5 0%, #3b82f6 100%)', 
+          top: '10%', 
+          left: '50%', 
+          transform: 'translateX(-50%)' 
+        }} />
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Typography 
+            variant="h2" 
+            component="h1" 
+            gutterBottom
+            sx={{ 
+              fontWeight: 'bold',
+              background: 'linear-gradient(45deg, #4f46e5, #3b82f6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 2
+            }}
+          >
+            Flexible Pricing for Every Need
+          </Typography>
+          
+          <Typography variant="h5" color="text.secondary" sx={{ mb: 4, maxWidth: '800px', mx: 'auto' }}>
+            Choose the perfect plan with our hybrid subscription and credit model
+          </Typography>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: 'wrap', mb: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <AutorenewIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+              <Typography variant="body1">Subscription Plans</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <LocalAtmIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+              <Typography variant="body1">Pay-As-You-Go Credits</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <SecurityIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+              <Typography variant="body1">Enterprise Solutions</Typography>
+            </Box>
+          </Box>
+        </motion.div>
+      </Box>
+
+      {/* Hybrid Subscription Manager */}
+      <HybridSubscriptionManager />
+
+      {/* Enterprise Section */}
+      <Box 
+        sx={{ 
+          mt: 8, 
+          p: 4, 
+          borderRadius: 2,
+          background: `linear-gradient(45deg, ${alpha(theme.palette.primary.main, 0.05)}, ${alpha(theme.palette.secondary.main, 0.05)})`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <GradientBox sx={{ 
+          background: 'radial-gradient(circle, #3b82f6 0%, #4f46e5 100%)', 
+          top: '50%', 
+          right: '-20%',
+          transform: 'translateY(-50%)',
+          opacity: 0.07
+        }} />
+        
+        <Grid container spacing={4} alignItems="center">
+          <Grid item xs={12} md={7}>
+            <Typography variant="h4" component="h2" gutterBottom>
+              Enterprise Solutions
+            </Typography>
+            <Typography variant="body1" paragraph>
+              Need a custom solution for your organization? Our enterprise plans offer tailored features, dedicated support, and flexible pricing options.
+            </Typography>
+            <Typography variant="body1" paragraph>
+              • Custom feature development
+            </Typography>
+            <Typography variant="body1" paragraph>
+              • Dedicated account manager
+            </Typography>
+            <Typography variant="body1" paragraph>
+              • Priority 24/7 support
+            </Typography>
+            <Typography variant="body1" paragraph>
+              • Custom integrations
+            </Typography>
+            <Typography variant="body1" paragraph>
+              • Volume discounts
+            </Typography>
+            <Box sx={{ mt: 3 }}>
+              <RouterLink to="/contact" style={{ textDecoration: 'none' }}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Box 
+                    sx={{ 
+                      display: 'inline-block',
+                      px: 4,
+                      py: 1.5,
+                      bgcolor: theme.palette.primary.main,
+                      color: 'white',
+                      borderRadius: 2,
+                      fontWeight: 'bold',
+                      boxShadow: 3,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Contact Sales
+                  </Box>
+                </motion.div>
+              </RouterLink>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%'
+              }}
+            >
+              <FamilyRestroomIcon 
+                sx={{ 
+                  fontSize: '200px', 
+                  color: alpha(theme.palette.primary.main, 0.2),
+                  transform: 'rotate(-5deg)'
+                }} 
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* FAQs Section */}
+      <Box sx={{ mt: 8, mb: 8 }}>
+        <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
+          Frequently Asked Questions
+        </Typography>
+        
+        {faqs.map((faq, index) => (
+          <Accordion key={index} sx={{ mb: 1 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`faq-content-${index}`}
+              id={`faq-header-${index}`}
+            >
+              <Typography variant="subtitle1" fontWeight="medium">{faq.question}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body1" color="text.secondary">
+                {faq.answer}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
+    </Container>
+  );
+};
+
+export default PricingPage;
