@@ -4,8 +4,6 @@ import LeftNav from './components/LeftNav';
 
 import ThreatDashboard from './components/ThreatDashboard';
 import BrowserTabs from './components/BrowserTabs';
-import SimsFrame from './components/SimsFrame';
-import FabricFrame from './components/FabricFrame';
 import TeamsManager from './components/TeamsManager';
 import DeviceManager from './components/DeviceManager';
 import TopMenuResizer from './components/TopMenuResizer';
@@ -175,8 +173,6 @@ export default function App(){
 
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
               {activeNavItem === 'devices' && <DeviceManager className="device-manager fade-in" />}
-              {activeNavItem === 'sims' && <SimsFrame className="sims-frame fade-in" />}
-              {activeNavItem === 'fabric' && <FabricFrame className="fabric-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
               {activeNavItem === 'project' && <CodeServer className="code-server fade-in" />}
             </div>

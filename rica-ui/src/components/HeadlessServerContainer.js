@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './HeadlessServerContainer.css';
-import FabricFrame from './FabricFrame';
-import SimsFrame from './SimsFrame';
 import AutoFrame from './AutoFrame';
+import CodeServerFrame from './CodeServerFrame';
 import ErrorBoundary from './ErrorBoundary';
 import headlessServerHealthService from '../services/HeadlessServerHealthService';
 
@@ -19,20 +18,15 @@ const HeadlessServerContainer = ({ serverType }) => {
 
   // Define server configurations
   const serverConfigs = {
-    fabric: {
-      name: 'Fabric (OpenCTI)',
-      component: FabricFrame,
-      description: 'Threat intelligence platform'
-    },
-    sims: {
-      name: 'Simulations (OpenBAS)',
-      component: SimsFrame,
-      description: 'Security simulation platform'
-    },
     auto: {
       name: 'Auto (Activepieces)',
       component: AutoFrame,
       description: 'Automation workflow platform'
+    },
+    code: {
+      name: 'Code Server',
+      component: CodeServerFrame,
+      description: 'VS Code in browser for development'
     }
   };
 

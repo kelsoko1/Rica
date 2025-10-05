@@ -69,8 +69,8 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      - OLLAMA_URL=http://ollama:2024
-      - OLLAMA_EXTERNAL_URL=http://localhost:2024
+      - OLLAMA_URL=http://ollama:2022
+      - OLLAMA_EXTERNAL_URL=http://localhost:2022
       - API_KEY=${API_KEY:-changeme_in_production}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
       - OPENCTI_URL=http://opencti:4000
@@ -196,14 +196,14 @@ services:
     container_name: activepieces
     restart: always
     ports:
-      - "2022:80"
+      - "2020:80"
     environment:
       - AP_ENGINE_EXECUTABLE_PATH=dist/packages/engine/main.js
       - AP_API_KEY=${AP_API_KEY:-changeme_in_production}
       - AP_ENCRYPTION_KEY=${AP_ENCRYPTION_KEY:-changeme_in_production}
       - AP_JWT_SECRET=${AP_JWT_SECRET:-changeme_in_production}
       - AP_ENVIRONMENT=prod
-      - AP_FRONTEND_URL=http://localhost:2022
+      - AP_FRONTEND_URL=http://localhost:2020
       - AP_WEBHOOK_TIMEOUT_SECONDS=30
       - AP_TRIGGER_DEFAULT_POLL_INTERVAL=5
       - AP_POSTGRES_DATABASE=activepieces
@@ -238,7 +238,7 @@ services:
     container_name: code-server
     restart: always
     ports:
-      - "2023:8080"
+      - "2021:8080"
     environment:
       - PASSWORD=${CODE_SERVER_PASSWORD:-ChangeMeInProduction123!}
       - SUDO_PASSWORD=${CODE_SERVER_SUDO_PASSWORD:-ChangeMeInProduction123!}
@@ -260,7 +260,7 @@ services:
     container_name: ollama
     restart: always
     ports:
-      - "2024:11434"
+      - "2022:11434"
     volumes:
       - ollama_data:/root/.ollama
     networks:
@@ -377,4 +377,5 @@ volumes:
 
 networks:
   rica-network:
-    driver: bridge
+    external: true
+    name: rica-network

@@ -52,42 +52,6 @@ export default function LeftNav({collapsed, onToggle, className, onNavItemChange
           </svg>
           {!collapsed && <span>Device Manager</span>}
         </button>
-        
-        <button 
-          className={`nav-btn ${activeItem === 'sims' ? 'active' : ''} ${hoverItem === 'sims' ? 'hover' : ''}`} 
-          title="Simulations"
-          onClick={() => handleNavClick('sims')}
-          onMouseEnter={() => setHoverItem('sims')}
-          onMouseLeave={() => setHoverItem(null)}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17.9981 7.79L15.5781 5.37C14.8381 4.63 13.7181 4.63 12.9781 5.37L10.5581 7.79C10.2181 8.13 10.0781 8.6 10.1781 9.05C10.2781 9.51 10.6381 9.87 11.0981 9.97C11.5581 10.07 12.0281 9.93 12.3681 9.59L13.9981 7.96V14.96C13.9981 15.5 14.4481 15.95 14.9981 15.95C15.5481 15.95 15.9981 15.5 15.9981 14.96V7.96L17.6281 9.59C17.9681 9.93 18.4381 10.07 18.8981 9.97C19.3581 9.87 19.7181 9.51 19.8181 9.05C19.9181 8.6 19.7781 8.13 19.4381 7.79H17.9981Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M6.00195 16.21L8.42195 18.63C9.16195 19.37 10.2819 19.37 11.0219 18.63L13.4419 16.21C13.7819 15.87 13.9219 15.4 13.8219 14.95C13.7219 14.49 13.3619 14.13 12.9019 14.03C12.4419 13.93 11.9719 14.07 11.6319 14.41L10.0019 16.04V9.04C10.0019 8.49 9.55195 8.04 9.00195 8.04C8.45195 8.04 8.00195 8.49 8.00195 9.04V16.04L6.37195 14.41C6.03195 14.07 5.56195 13.93 5.10195 14.03C4.64195 14.13 4.28195 14.49 4.18195 14.95C4.08195 15.4 4.22195 15.87 4.56195 16.21H6.00195Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {!collapsed && <span>Simulations</span>}
-        </button>
-          
-          <button 
-            className={`nav-btn ${activeItem === 'fabric' ? 'active' : ''} ${hoverItem === 'fabric' ? 'hover' : ''}`} 
-            title="Fabric"
-            onClick={() => handleNavClick('fabric')}
-            onMouseEnter={() => setHoverItem('fabric')}
-            onMouseLeave={() => setHoverItem(null)}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 2V5" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M16 2V5" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M3.5 9.09H20.5" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M15.6947 13.7H15.7037" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M15.6947 16.7H15.7037" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M11.9955 13.7H12.0045" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M11.9955 16.7H12.0045" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8.29431 13.7H8.30329" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8.29431 16.7H8.30329" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            {!collapsed && <span>Fabric</span>}
-          </button>
 
           <button 
             className={`nav-btn ${activeItem === 'teams' ? 'active' : ''} ${hoverItem === 'teams' ? 'hover' : ''}`} 

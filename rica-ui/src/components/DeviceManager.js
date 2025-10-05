@@ -12,8 +12,6 @@ const DeviceManager = () => {
   const [isCollecting, setIsCollecting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [settings, setSettings] = useState({
-    openCTIEndpoint: 'http://localhost:2020/graphql',
-    openBASEndpoint: 'http://localhost:2021/api/injects',
     discoveryInterval: 60,
     dataCollectionInterval: 300
   });
@@ -153,8 +151,6 @@ const DeviceManager = () => {
   // Apply settings
   const handleApplySettings = () => {
     DeviceLinkingService.updateSettings({
-      openCTIEndpoint: settings.openCTIEndpoint,
-      openBASEndpoint: settings.openBASEndpoint,
       discoveryInterval: parseInt(settings.discoveryInterval, 10),
       dataCollectionInterval: parseInt(settings.dataCollectionInterval, 10)
     });
@@ -393,28 +389,6 @@ const DeviceManager = () => {
           {activeTab === 'settings' && (
             <div className="settings-tab">
               <div className="settings-form">
-                <div className="form-group">
-                  <label htmlFor="openCTIEndpoint">OpenCTI GraphQL Endpoint</label>
-                  <input
-                    type="text"
-                    id="openCTIEndpoint"
-                    name="openCTIEndpoint"
-                    value={settings.openCTIEndpoint}
-                    onChange={handleSettingsChange}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="openBASEndpoint">OpenBAS API Endpoint</label>
-                  <input
-                    type="text"
-                    id="openBASEndpoint"
-                    name="openBASEndpoint"
-                    value={settings.openBASEndpoint}
-                    onChange={handleSettingsChange}
-                  />
-                </div>
-                
                 <div className="form-group">
                   <label htmlFor="discoveryInterval">Discovery Interval (seconds)</label>
                   <input

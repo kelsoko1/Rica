@@ -7,14 +7,14 @@ services:
     container_name: activepieces
     restart: always
     ports:
-      - "2022:80"
+      - "2020:80"
     environment:
       - AP_ENGINE_EXECUTABLE_PATH=dist/packages/engine/main.js
       - AP_API_KEY=${AP_API_KEY:-changeme_in_production}
       - AP_ENCRYPTION_KEY=${AP_ENCRYPTION_KEY:-changeme_in_production}
       - AP_JWT_SECRET=${AP_JWT_SECRET:-changeme_in_production}
       - AP_ENVIRONMENT=prod
-      - AP_FRONTEND_URL=http://localhost:2022
+      - AP_FRONTEND_URL=http://localhost:2020
       - AP_WEBHOOK_TIMEOUT_SECONDS=30
       - AP_TRIGGER_DEFAULT_POLL_INTERVAL=5
       - AP_POSTGRES_DATABASE=activepieces
@@ -85,4 +85,5 @@ volumes:
 
 networks:
   rica-network:
-    driver: bridge
+    external: true
+    name: rica-network

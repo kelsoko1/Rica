@@ -9,11 +9,9 @@ This document describes all the ports used by Rica services.
 | **Rica UI** | 80 | 3000 | Main Rica user interface |
 | **Rica API** | 3001 | 3001 | Rica backend API |
 | **Rica Landing** | 80 | 80 (via nginx) | Landing page |
-| **Ollama** | 11434 | **2024** | DeepSeek AI model server |
-| **OpenCTI** | 4000 | **2020** | Threat intelligence platform |
-| **OpenBAS** | 3000 | **2021** | Security simulation platform |
-| **Activepieces** | 80 | **2022** | Automation/workflow platform |
-| **Code Server** | 8080 | **2023** | VS Code in browser |
+| **Activepieces** | 80 | **2020** | Automation/workflow platform |
+| **Code Server** | 8080 | **2021** | VS Code in browser |
+| **Ollama** | 11434 | **2022** | DeepSeek AI model server |
 | **Nginx** | 80/443 | 80/443 | Reverse proxy |
 | **PostgreSQL** | 5432 | - | Database (internal only) |
 | **Redis** | 6379 | - | Cache/queue (internal only) |
@@ -21,39 +19,27 @@ This document describes all the ports used by Rica services.
 | **MinIO** | 9000/9001 | - | Object storage (internal only) |
 | **RabbitMQ** | 5672/15672 | - | Message broker (internal only) |
 
-## Headless Server Ports (2020-2024)
+## Headless Server Ports (2020-2022)
 
 The headless servers are configured to run on sequential ports starting from 2020:
 
-### Port 2020 - OpenCTI (Fabric)
-- **Service**: OpenCTI - Open Cyber Threat Intelligence Platform
-- **Access**: http://localhost:2020
-- **Purpose**: Threat intelligence management, STIX/TAXII support
-- **UI Tab**: "Fabric"
-
-### Port 2021 - OpenBAS (Simulations)
-- **Service**: OpenBAS - Open Breach and Attack Simulation
-- **Access**: http://localhost:2021
-- **Purpose**: Security simulation and training exercises
-- **UI Tab**: "Sims"
-
-### Port 2022 - Activepieces (Auto)
+### Port 2020 - Activepieces (Auto)
 - **Service**: Activepieces - Automation Platform
-- **Access**: http://localhost:2022
+- **Access**: http://localhost:2020
 - **Purpose**: Workflow automation, integrations, scheduled tasks
 - **UI Tab**: "Auto"
 
-### Port 2023 - Code Server
+### Port 2021 - Code Server
 - **Service**: Code Server - VS Code in Browser
-- **Access**: http://localhost:2023
+- **Access**: http://localhost:2021
 - **Purpose**: Browser-based development environment
-- **UI Tab**: N/A (accessed via direct URL)
+- **UI Tab**: "Project" (when integrated)
 
-### Port 2024 - Ollama
-- **Service**: Ollama - DeepSeek AI Model Server
-- **Access**: http://localhost:2024
-- **Purpose**: AI model serving for DeepSeek
-- **UI Tab**: N/A (accessed via API)
+### Port 2022 - Ollama
+- **Service**: Ollama - AI Model Server
+- **Access**: http://localhost:2022
+- **Purpose**: DeepSeek and other AI models for Starry assistant
+- **UI Tab**: N/A (backend service)
 
 ## Port Configuration
 
@@ -63,9 +49,17 @@ To change the external ports, edit `docker-compose.prod.yml`:
 
 ```yaml
 services:
-  opencti:
+  activepieces:
     ports:
-      - "2020:4000"  # Change 2020 to your desired port
+      - "2020:80"  # Change 2020 to your desired port
+  
+  code-server:
+    ports:
+      - "2021:8080"  # Change 2021 to your desired port
+  
+  ollama:
+    ports:
+      - "2022:11434"  # Change 2022 to your desired port
 ```
 
 After changing ports, also update the corresponding UI components:

@@ -3,8 +3,6 @@ import LeftNav from './components/LeftNav';
 
 
 import ThreatDashboard from './components/ThreatDashboard';
-import SimsFrame from './components/SimsFrame';
-import FabricFrame from './components/FabricFrame';
 import AutoFrame from './components/AutoFrame';
 import HeadlessServerContainer from './components/HeadlessServerContainer';
 import TeamsManager from './components/TeamsManager';
@@ -109,7 +107,7 @@ export default function App(){
           <div className="topbar-content" style={{ height: `${topMenuHeight}px` }}>
             <div className="top-left">
               {/* Only show status indicator when a headless server is active */}
-              {(activeNavItem === 'fabric' || activeNavItem === 'sims' || activeNavItem === 'auto') && (
+              {activeNavItem === 'auto' && (
                 <HeadlessServerStatusIndicator />
               )}
             </div>
@@ -167,8 +165,7 @@ export default function App(){
           ) : (
             <div className="workspace-content-container">
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
-              {activeNavItem === 'sims' && <HeadlessServerContainer serverType="sims" className="sims-frame fade-in" />}
-              {activeNavItem === 'fabric' && <HeadlessServerContainer serverType="fabric" className="fabric-frame fade-in" />}
+              {activeNavItem === 'project' && <HeadlessServerContainer serverType="code" className="code-server-frame fade-in" />}
               {activeNavItem === 'auto' && <HeadlessServerContainer serverType="auto" className="auto-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
             </div>

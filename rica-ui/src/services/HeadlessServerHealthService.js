@@ -8,18 +8,14 @@
 class HeadlessServerHealthService {
   constructor() {
     this.serverStatus = {
-      fabric: { isHealthy: false, lastChecked: null, error: null },
-      sims: { isHealthy: false, lastChecked: null, error: null },
       auto: { isHealthy: false, lastChecked: null, error: null },
       code: { isHealthy: false, lastChecked: null, error: null }
     };
     
     this.serverUrls = {
-      fabric: process.env.REACT_APP_FABRIC_URL || 'http://localhost:2020',
-      sims: process.env.REACT_APP_SIMS_URL || 'http://localhost:2021',
-      auto: process.env.REACT_APP_AUTO_URL || 'http://localhost:2022',
-      code: process.env.REACT_APP_CODE_SERVER_URL || 'http://localhost:2023',
-      ollama: process.env.REACT_APP_OLLAMA_URL || 'http://localhost:2024'
+      auto: process.env.REACT_APP_AUTO_URL || 'http://localhost:2020',
+      code: process.env.REACT_APP_CODE_SERVER_URL || 'http://localhost:2021',
+      ollama: process.env.REACT_APP_OLLAMA_URL || 'http://localhost:2022'
     };
     
     this.checkIntervalMs = 60000; // Check every minute

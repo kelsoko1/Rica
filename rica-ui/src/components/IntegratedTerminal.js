@@ -188,9 +188,7 @@ export default function IntegratedTerminal() {
         { type: 'output', text: '  help - Show this help message' },
         { type: 'output', text: '  clear - Clear terminal history' },
         { type: 'output', text: '  ls - List files in current directory' },
-        { type: 'output', text: '  scan - Run security scan' },
-        { type: 'output', text: '  threat-actors - List threat actors from OpenCTI' },
-        { type: 'output', text: '  simulate - Run a simulation via OpenBAS' }
+        { type: 'output', text: '  scan - Run security scan' }
       ]);
       return;
     }

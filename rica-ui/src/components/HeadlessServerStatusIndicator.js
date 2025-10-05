@@ -68,9 +68,7 @@ const HeadlessServerStatusIndicator = () => {
           <div key={serverType} className="server-item">
             <div className={`server-status ${status.isHealthy ? 'healthy' : 'error'}`}></div>
             <div className="server-name">
-              {serverType === 'fabric' ? 'Fabric (OpenCTI)' : 
-               serverType === 'sims' ? 'Simulations (OpenBAS)' : 
-               serverType === 'auto' ? 'Auto (Activepieces)' : 
+              {serverType === 'auto' ? 'Auto (Activepieces)' : 
                serverType === 'code' ? 'Code Server' : 
                serverType === 'ollama' ? 'Ollama (DeepSeek)' : serverType}
             </div>

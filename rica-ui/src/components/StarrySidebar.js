@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
+import ollamaService from '../services/OllamaService';
 import './StarrySidebar.css';
 const API = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
@@ -149,17 +150,24 @@ export default function StarrySidebar({open, onClose, currentFile, onFileEdit}){
       setActiveCommand(command);
 
       let responseText;
-      if (command && fileContext) {
-        // Handle code-related commands
-        responseText = await handleCodeCommand(command, userMessage);
-      } else {
-        // Regular chat mode
-        const r = await axios.post(API + '/starry', { 
-          prompt: userMessage,
-          file: fileContext,
-          org: 'demo'
-        });
-        responseText = r.data.reply.content || JSON.stringify(r.data.reply);
+      
+      // Use Ollama for AI responses
+      const messages = ollamaService.formatCodeAssistanceMessages(
+        userMessage,
+        fileContext ? JSON.stringify(fileContext, null, 2) : null
+      );
+      
+      responseText = await ollamaService.chat(messages, {
+        temperature: 0.7,
+        model: 'deepseek-r1:1.5b'
+      });
+      
+      // Handle code editing commands if applicable
+      if (command && (command === COMMANDS.EDIT || command === COMMANDS.REFACTOR)) {
+        const codeMatch = responseText.match(/```(?:javascript|js|jsx|ts|tsx)?\n([\s\S]*?)\n```/);
+        if (codeMatch && codeMatch[1] && onFileEdit) {
+          onFileEdit(codeMatch[1]);
+        }
       }
       
       // Generate new suggestions based on the conversation

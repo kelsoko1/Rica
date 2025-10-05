@@ -9,8 +9,6 @@ const HeadlessServerStatusContext = createContext(null);
  */
 export const HeadlessServerStatusProvider = ({ children }) => {
   const [serverStatus, setServerStatus] = useState({
-    fabric: { isHealthy: false, lastChecked: null, error: null },
-    sims: { isHealthy: false, lastChecked: null, error: null },
     auto: { isHealthy: false, lastChecked: null, error: null },
     code: { isHealthy: false, lastChecked: null, error: null },
     ollama: { isHealthy: false, lastChecked: null, error: null }
