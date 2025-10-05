@@ -9,7 +9,7 @@ This document describes all the ports used by Rica services.
 | **Rica UI** | 80 | 3000 | Main Rica user interface |
 | **Rica API** | 3001 | 3001 | Rica backend API |
 | **Rica Landing** | 80 | 80 (via nginx) | Landing page |
-| **Ollama** | 11434 | 11434 | DeepSeek AI model server |
+| **Ollama** | 11434 | **2024** | DeepSeek AI model server |
 | **OpenCTI** | 4000 | **2020** | Threat intelligence platform |
 | **OpenBAS** | 3000 | **2021** | Security simulation platform |
 | **Activepieces** | 80 | **2022** | Automation/workflow platform |
@@ -21,7 +21,7 @@ This document describes all the ports used by Rica services.
 | **MinIO** | 9000/9001 | - | Object storage (internal only) |
 | **RabbitMQ** | 5672/15672 | - | Message broker (internal only) |
 
-## Headless Server Ports (2020-2023)
+## Headless Server Ports (2020-2024)
 
 The headless servers are configured to run on sequential ports starting from 2020:
 
@@ -48,6 +48,12 @@ The headless servers are configured to run on sequential ports starting from 202
 - **Access**: http://localhost:2023
 - **Purpose**: Browser-based development environment
 - **UI Tab**: N/A (accessed via direct URL)
+
+### Port 2024 - Ollama
+- **Service**: Ollama - DeepSeek AI Model Server
+- **Access**: http://localhost:2024
+- **Purpose**: AI model serving for DeepSeek
+- **UI Tab**: N/A (accessed via API)
 
 ## Port Configuration
 
@@ -78,11 +84,11 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 3000/tcp
 sudo ufw allow 3001/tcp
-sudo ufw allow 11434/tcp
 sudo ufw allow 2020/tcp
 sudo ufw allow 2021/tcp
 sudo ufw allow 2022/tcp
 sudo ufw allow 2023/tcp
+sudo ufw allow 2024/tcp
 ```
 
 ## Security Considerations

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './SimsFrame.css';
+import './IframeContainer.css';
 
-const SimsFrame = () => {
+const SimsFrame = ({ onError }) => {
   const [activeSection, setActiveSection] = useState('exercises');
   const [navOpen, setNavOpen] = useState(true);
   const [exercises, setExercises] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [showNewExerciseForm, setShowNewExerciseForm] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   const [newExerciseData, setNewExerciseData] = useState({
     name: '',
     description: '',
@@ -153,7 +155,26 @@ const SimsFrame = () => {
     }
   };
 
-  return (
+  // Direct iframe integration
+  const renderDirectIframe = () => {
+    return (
+      <div className="iframe-container">
+        <iframe
+          src="http://localhost:2021"
+          title="OpenBAS Security Simulation Platform"
+          className="external-iframe"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
+          allow="clipboard-read; clipboard-write"
+          onLoad={() => setIframeLoaded(true)}
+          onError={() => onError && onError()}
+        />
+      </div>
+    );
+  };
+
+  // Rich UI version (original implementation)
+  const renderRichUI = () => {
+    return (
     <div className="sims-container">
       {/* Left Navigation */}
       <div className={`sims-leftbar ${navOpen ? 'open' : 'closed'}`}>
@@ -508,7 +529,11 @@ const SimsFrame = () => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
+
+  // Use direct iframe integration
+  return renderDirectIframe();
 };
 
 export default SimsFrame;

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './IframeContainer.css';
 
-export default function AutoFrame() {
+export default function AutoFrame({ onError }) {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  
   return (
     <div className="iframe-container">
       <iframe
@@ -10,6 +12,8 @@ export default function AutoFrame() {
         className="external-iframe"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
         allow="clipboard-read; clipboard-write"
+        onLoad={() => setIframeLoaded(true)}
+        onError={() => onError && onError()}
       />
     </div>
   );

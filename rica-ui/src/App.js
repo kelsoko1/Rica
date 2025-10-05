@@ -6,14 +6,18 @@ import ThreatDashboard from './components/ThreatDashboard';
 import SimsFrame from './components/SimsFrame';
 import FabricFrame from './components/FabricFrame';
 import AutoFrame from './components/AutoFrame';
+import HeadlessServerContainer from './components/HeadlessServerContainer';
 import TeamsManager from './components/TeamsManager';
 import TopMenuResizer from './components/TopMenuResizer';
 import CustomLeftSidebar from './components/CustomLeftSidebar';
 import StarrySidebar from './components/StarrySidebar';
 import ErrorBoundary from './components/ErrorBoundary';
+import HeadlessServerStatusIndicator from './components/HeadlessServerStatusIndicator';
+import { HeadlessServerStatusProvider } from './services/HeadlessServerStatusManager';
 import './components/Workspace.css';
 import './components/TopMenuResizer.css';
 import './components/MainContent.css';
+import './components/TopbarStyles.css';
 
 export default function App(){
   const [leftCollapsed, setLeftCollapsed] = useState(false);
@@ -76,7 +80,8 @@ export default function App(){
 
   return (
     <ErrorBoundary>
-      <div className={'app ' + (leftCollapsed ? 'left-collapsed' : '')}>
+      <HeadlessServerStatusProvider>
+        <div className={'app ' + (leftCollapsed ? 'left-collapsed' : '')}>
       {/* Mobile overlay */}
       <div 
         className={`mobile-overlay ${mobileNavVisible ? 'visible' : ''}`}
@@ -102,7 +107,12 @@ export default function App(){
       <div className={`center-area resizable ${leftCollapsed ? 'left-collapsed' : ''} ${starrySidebarOpen ? 'starry-open' : ''}`}>
         <div className="topbar" style={{ height: `${topMenuHeight}px` }}>
           <div className="topbar-content" style={{ height: `${topMenuHeight}px` }}>
-            <div className="top-left"></div>
+            <div className="top-left">
+              {/* Only show status indicator when a headless server is active */}
+              {(activeNavItem === 'fabric' || activeNavItem === 'sims' || activeNavItem === 'auto') && (
+                <HeadlessServerStatusIndicator />
+              )}
+            </div>
             <div className="top-right">
             
             <button 
@@ -157,15 +167,16 @@ export default function App(){
           ) : (
             <div className="workspace-content-container">
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
-              {activeNavItem === 'sims' && <SimsFrame className="sims-frame fade-in" />}
-              {activeNavItem === 'fabric' && <FabricFrame className="fabric-frame fade-in" />}
-              {activeNavItem === 'auto' && <AutoFrame className="auto-frame fade-in" />}
+              {activeNavItem === 'sims' && <HeadlessServerContainer serverType="sims" className="sims-frame fade-in" />}
+              {activeNavItem === 'fabric' && <HeadlessServerContainer serverType="fabric" className="fabric-frame fade-in" />}
+              {activeNavItem === 'auto' && <HeadlessServerContainer serverType="auto" className="auto-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
             </div>
           )}
         </div>
       </div>
     </div>
+      </HeadlessServerStatusProvider>
     </ErrorBoundary>
   );
 }

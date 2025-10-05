@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './FabricFrame.css';
+import './IframeContainer.css';
 
-const FabricFrame = () => {
+const FabricFrame = ({ onError }) => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [navOpen, setNavOpen] = useState(true);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   
   const toggleNav = () => {
     setNavOpen(!navOpen);
@@ -17,23 +19,42 @@ const FabricFrame = () => {
     }
   }, []);
 
-  return (
-    <div className="fabric-container">
-      {/* Left Navigation */}
-      <div className={`fabric-leftbar ${navOpen ? 'open' : 'closed'}`}>
-        <div className="leftbar-header">
-          <div className="toggle-button" onClick={toggleNav}>
-            {navOpen ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
+  // Direct iframe integration
+  const renderDirectIframe = () => {
+    return (
+      <div className="iframe-container">
+        <iframe
+          src="http://localhost:2020"
+          title="OpenCTI Threat Intelligence Platform"
+          className="external-iframe"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
+          allow="clipboard-read; clipboard-write"
+          onLoad={() => setIframeLoaded(true)}
+          onError={() => onError && onError()}
+        />
+      </div>
+    );
+  };
+
+  // Rich UI version (original implementation)
+  const renderRichUI = () => {
+    return (
+      <div className="fabric-container">
+        {/* Left Navigation */}
+        <div className={`fabric-leftbar ${navOpen ? 'open' : 'closed'}`}>
+          <div className="leftbar-header">
+            <div className="toggle-button" onClick={toggleNav}>
+              {navOpen ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
           </div>
-        </div>
         <div className="leftbar-content">
           {/* Navigation Menu Items */}
           <div className="menu-list">
@@ -375,7 +396,11 @@ const FabricFrame = () => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
+
+  // Use direct iframe integration
+  return renderDirectIframe();
 };
 
 export default FabricFrame;
