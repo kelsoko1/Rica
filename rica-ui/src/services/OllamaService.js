@@ -6,7 +6,7 @@
 
 class OllamaService {
   constructor() {
-    this.baseUrl = process.env.REACT_APP_OLLAMA_URL || 'http://localhost:2022';
+    this.baseUrl = process.env.REACT_APP_OLLAMA_URL || 'http://72.60.133.11:2022';
     this.model = 'deepseek-r1:1.5b'; // Default model
   }
 
@@ -193,6 +193,23 @@ class OllamaService {
       console.error('Ollama version error:', error);
       throw error;
     }
+  }
+
+  /**
+   * Set the default model
+   * @param {string} modelName - Name of the model to use
+   */
+  setModel(modelName) {
+    this.model = modelName;
+    console.log(`Ollama model changed to: ${modelName}`);
+  }
+
+  /**
+   * Get the current default model
+   * @returns {string} - Current model name
+   */
+  getModel() {
+    return this.model;
   }
 
   /**

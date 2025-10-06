@@ -2,7 +2,7 @@
 .workspace {
   display: flex;
   width: 100%;
-  height: calc(100vh - var(--topbar-height, 60px));
+  height: 100vh;
   position: relative;
   background: #0f111a;
   overflow: hidden;

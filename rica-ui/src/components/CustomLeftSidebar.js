@@ -13,10 +13,11 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
   
   return (
     <div className={`custom-left-sidebar ${collapsed ? 'collapsed' : ''}`}>
-      <div className="brand">
+      {/* Brand section hidden */}
+      {/* <div className="brand">
         <div className="logo">R</div>
         {!collapsed && <div className="brand-text">Rica</div>}
-      </div>
+      </div> */}
       
       <nav className="nav-items">
         <button 
@@ -33,24 +34,6 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
           {!collapsed && <span>Project Explorer</span>}
         </button>
         
-        <button 
-          className={`nav-btn ${activeItem === 'devices' ? 'active' : ''} ${hoverItem === 'devices' ? 'hover' : ''}`} 
-          title="Device Manager"
-          onClick={() => handleNavClick('devices')}
-          onMouseEnter={() => setHoverItem('devices')}
-          onMouseLeave={() => setHoverItem(null)}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 16.95H6.21C2.84 16.95 2 16.11 2 12.74V6.74C2 3.37 2.84 2.53 6.21 2.53H16.74C20.11 2.53 20.95 3.37 20.95 6.74" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M10 21.47V16.95" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M2 12.95H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M6.74 21.47H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M22 12.8V18.51C22 20.88 21.41 21.47 19.04 21.47H15.49C13.12 21.47 12.53 20.88 12.53 18.51V12.8C12.53 10.43 13.12 9.84 15.49 9.84H19.04C21.41 9.84 22 10.43 22 12.8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M17.25 18.25C17.9404 18.25 18.5 17.6904 18.5 17C18.5 16.3096 17.9404 15.75 17.25 15.75C16.5596 15.75 16 16.3096 16 17C16 17.6904 16.5596 18.25 17.25 18.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {!collapsed && <span>Device Manager</span>}
-        </button>
-
         <button 
           className={`nav-btn ${activeItem === 'auto' ? 'active' : ''} ${hoverItem === 'auto' ? 'hover' : ''}`} 
           title="Automation"
@@ -89,6 +72,52 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
       </nav>
       
       <div className="sidebar-footer">
+        {/* Starry Button */}
+        <button 
+          className="sidebar-action-btn starry-btn"
+          onClick={() => {
+            // Toggle Starry sidebar - will be handled by parent
+            const event = new CustomEvent('toggleStarry');
+            window.dispatchEvent(event);
+          }}
+          title="Starry AI Assistant"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17.75L5.82799 20.995L7.00699 14.122L2.00699 9.255L8.90699 8.255L11.993 2.002L15.079 8.255L21.979 9.255L16.979 14.122L18.158 20.995L12 17.75Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {!collapsed && <span>Starry</span>}
+        </button>
+        
+        {/* Credits Button */}
+        <button 
+          className="sidebar-action-btn credits-btn"
+          onClick={() => window.location.href = 'http://localhost:3030/payment-history'}
+          title="View Billing & Tokens"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {!collapsed && <span className="credits-info"><strong>25</strong> Credits</span>}
+        </button>
+        
+        {/* User Menu Button */}
+        <button 
+          className="sidebar-action-btn user-btn"
+          onClick={() => window.location.href = 'http://localhost:3030/profile'}
+          title="Account Settings"
+        >
+          <div className="user-avatar-small">KD</div>
+          {!collapsed && (
+            <div className="user-info-small">
+              <div className="user-name-small">Kelvin Demo</div>
+              <div className="user-role-small">Security Analyst</div>
+            </div>
+          )}
+        </button>
+        
+        <div className="sidebar-divider"></div>
+        
         <button className="collapse-btn" onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {collapsed ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

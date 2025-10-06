@@ -2,12 +2,30 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import firebaseAuthService from '../services/firebaseAuthService';
 import { auth } from '../config/firebase';
 
-// Create Firebase Auth Context
-const FirebaseAuthContext = createContext();
+// Create Firebase Auth Context with default value
+const FirebaseAuthContext = createContext({
+  currentUser: null,
+  loading: true,
+  error: null,
+  register: async () => {},
+  login: async () => {},
+  loginWithGoogle: async () => {},
+  logout: async () => {},
+  resetPassword: async () => {},
+  updateUserProfile: async () => {},
+  sendEmailVerification: async () => {},
+  updateUserEmail: async () => {},
+  updateUserPassword: async () => {},
+  deleteUserAccount: async () => {}
+});
 
 // Custom hook to use the Firebase Auth Context
 export const useFirebaseAuth = () => {
-  return useContext(FirebaseAuthContext);
+  const context = useContext(FirebaseAuthContext);
+  if (context === undefined) {
+    throw new Error('useFirebaseAuth must be used within a FirebaseAuthProvider');
+  }
+  return context;
 };
 
 // Firebase Auth Provider Component
@@ -18,26 +36,59 @@ export const FirebaseAuthProvider = ({ children }) => {
   
   // Listen for auth state changes
   useEffect(() => {
+    let mounted = true;
+    
     const unsubscribe = firebaseAuthService.onAuthStateChanged(async (user) => {
       try {
+        if (!mounted) return;
+        
         if (user) {
           // User is signed in
-          const userData = await firebaseAuthService.getCurrentUser();
-          setCurrentUser(userData);
+          try {
+            const userData = await firebaseAuthService.getCurrentUser();
+            if (mounted) {
+              setCurrentUser(userData);
+              setError(null);
+            }
+          } catch (userErr) {
+            console.error('Error fetching user data:', userErr);
+            // Still set the basic user info even if fetching full data fails
+            if (mounted) {
+              setCurrentUser({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                emailVerified: user.emailVerified
+              });
+            }
+          }
         } else {
           // User is signed out
-          setCurrentUser(null);
+          if (mounted) {
+            setCurrentUser(null);
+            setError(null);
+          }
         }
       } catch (err) {
         console.error('Error in auth state change:', err);
-        setError(err.message);
+        if (mounted) {
+          setError(err.message);
+          setCurrentUser(null);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     });
     
     // Cleanup subscription on unmount
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
   
   // Register with email and password
