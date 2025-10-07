@@ -42,13 +42,12 @@ echo.
 echo All Rica components started successfully.
 echo.
 echo Access the services at:
-echo - Rica UI: http://localhost:3000
+echo - Rica UI: http://localhost:3030
 echo - Rica API: http://localhost:3001
-echo - OpenCTI (Fabric): http://localhost:2020
-echo - OpenBAS (Simulations): http://localhost:2021
-echo - Activepieces (Auto): http://localhost:2022
-echo - Code Server: http://localhost:2023
-echo - Ollama: http://localhost:2024
+echo - Rica Landing: http://localhost:3000
+echo - Activepieces (Auto): http://localhost:2020
+echo - Code Server: http://localhost:2021
+echo - Ollama: http://localhost:2022
 goto :eof
 
 :start_ui

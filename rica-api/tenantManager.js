@@ -9,10 +9,15 @@
  * - Tenant lifecycle management
  */
 
-const k8s = require('@kubernetes/client-node');
-const crypto = require('crypto');
-const fs = require('fs').promises;
-const path = require('path');
+import * as k8s from '@kubernetes/client-node';
+import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Kubernetes client setup
 const kc = new k8s.KubeConfig();
@@ -326,7 +331,6 @@ class TenantManager {
   async applyYaml(yamlContent) {
     // This is a simplified version. In production, use kubectl apply or a proper YAML parser
     // For now, we'll parse and apply each resource individually
-    const yaml = require('js-yaml');
     const documents = yamlContent.split('---').filter(doc => doc.trim());
 
     for (const doc of documents) {
@@ -347,57 +351,62 @@ class TenantManager {
    */
   async applyResource(resource) {
     const { kind, metadata } = resource;
-    const namespace = metadata.namespace;
+    // For Namespace, use metadata.name; for other resources, use metadata.namespace
+    const namespace = metadata.namespace || metadata.name;
+
+    console.log(`Applying resource: kind=${kind}, name=${metadata.name}, namespace=${namespace}`);
 
     try {
       switch (kind) {
         case 'Namespace':
-          await k8sApi.createNamespace(resource);
+          await k8sApi.createNamespace({ body: resource });
           break;
         case 'ResourceQuota':
-          await k8sApi.createNamespacedResourceQuota(namespace, resource);
+          await k8sApi.createNamespacedResourceQuota(namespace, { body: resource });
           break;
         case 'LimitRange':
-          await k8sApi.createNamespacedLimitRange(namespace, resource);
+          await k8sApi.createNamespacedLimitRange(namespace, { body: resource });
           break;
         case 'NetworkPolicy':
-          await k8sNetworkingApi.createNamespacedNetworkPolicy(namespace, resource);
+          await k8sNetworkingApi.createNamespacedNetworkPolicy(namespace, { body: resource });
           break;
         case 'ServiceAccount':
-          await k8sApi.createNamespacedServiceAccount(namespace, resource);
+          await k8sApi.createNamespacedServiceAccount(namespace, { body: resource });
           break;
         case 'Role':
-          await k8sRbacApi.createNamespacedRole(namespace, resource);
+          await k8sRbacApi.createNamespacedRole(namespace, { body: resource });
           break;
         case 'RoleBinding':
-          await k8sRbacApi.createNamespacedRoleBinding(namespace, resource);
+          await k8sRbacApi.createNamespacedRoleBinding(namespace, { body: resource });
           break;
         case 'Deployment':
-          await k8sAppsApi.createNamespacedDeployment(namespace, resource);
+          await k8sAppsApi.createNamespacedDeployment(namespace, { body: resource });
           break;
         case 'StatefulSet':
-          await k8sAppsApi.createNamespacedStatefulSet(namespace, resource);
+          await k8sAppsApi.createNamespacedStatefulSet(namespace, { body: resource });
           break;
         case 'Service':
-          await k8sApi.createNamespacedService(namespace, resource);
+          await k8sApi.createNamespacedService(namespace, { body: resource });
           break;
         case 'ConfigMap':
-          await k8sApi.createNamespacedConfigMap(namespace, resource);
+          await k8sApi.createNamespacedConfigMap(namespace, { body: resource });
           break;
         case 'PersistentVolumeClaim':
-          await k8sApi.createNamespacedPersistentVolumeClaim(namespace, resource);
+          await k8sApi.createNamespacedPersistentVolumeClaim(namespace, { body: resource });
           break;
         case 'Ingress':
-          await k8sNetworkingApi.createNamespacedIngress(namespace, resource);
+          await k8sNetworkingApi.createNamespacedIngress(namespace, { body: resource });
           break;
         default:
           console.log(`Unsupported resource kind: ${kind}`);
       }
+      console.log(`Successfully created: ${kind}/${metadata.name}`);
     } catch (error) {
       if (error.response && error.response.statusCode === 409) {
         console.log(`Resource already exists: ${kind}/${metadata.name}`);
       } else {
-        throw error;
+        console.error(`Error applying resource: ${error.message}`);
+        // Continue with other resources instead of throwing
       }
     }
   }
@@ -530,4 +539,4 @@ class TenantManager {
   }
 }
 
-module.exports = new TenantManager();
+export default new TenantManager();

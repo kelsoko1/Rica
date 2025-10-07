@@ -43,10 +43,11 @@ services:
     container_name: rica-ui
     restart: always
     ports:
-      - "3000:80"
+      - "3030:80"
     environment:
       - NODE_ENV=production
       - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_RICA_UI_PORT=3030
     depends_on:
       - rica-api
     networks:
@@ -69,7 +70,7 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      - OLLAMA_URL=http://ollama:2022
+      - OLLAMA_URL=http://ollama:11434
       - OLLAMA_EXTERNAL_URL=http://localhost:2022
       - API_KEY=${API_KEY:-changeme_in_production}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}

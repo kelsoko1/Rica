@@ -5,7 +5,7 @@
  * Monitors credit usage and enforces resource limits based on available credits
  */
 
-const tenantManager = require('./tenantManager');
+import tenantManager from './tenantManager.js';
 
 // Credit costs for different features (credits per hour)
 const FEATURE_CREDIT_COSTS = {
@@ -371,4 +371,4 @@ class CreditResourceManager {
   }
 }
 
-module.exports = new CreditResourceManager();
+export default new CreditResourceManager();

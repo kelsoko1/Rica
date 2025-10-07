@@ -18,13 +18,12 @@ case "$COMMAND" in
         echo "All Rica components started successfully."
         echo
         echo "Access the services at:"
-        echo "- Rica UI: http://localhost:3000"
+        echo "- Rica UI: http://localhost:3030"
         echo "- Rica API: http://localhost:3001"
-        echo "- OpenCTI (Fabric): http://localhost:2020"
-        echo "- OpenBAS (Simulations): http://localhost:2021"
-        echo "- Activepieces (Auto): http://localhost:2022"
-        echo "- Code Server: http://localhost:2023"
-        echo "- Ollama: http://localhost:2024"
+        echo "- Rica Landing: http://localhost:3000"
+        echo "- Activepieces (Auto): http://localhost:2020"
+        echo "- Code Server: http://localhost:2021"
+        echo "- Ollama: http://localhost:2022"
         ;;
     ui)
         echo "Starting Rica UI components..."
@@ -33,7 +32,7 @@ case "$COMMAND" in
         echo "Rica UI components started successfully."
         echo
         echo "Access the services at:"
-        echo "- Rica UI: http://localhost:3000"
+        echo "- Rica UI: http://localhost:3030"
         echo "- Rica API: http://localhost:3001"
         ;;
     headless)
@@ -43,23 +42,21 @@ case "$COMMAND" in
         echo "All headless servers started successfully."
         echo
         echo "Access the services at:"
-        echo "- OpenCTI (Fabric): http://localhost:2020"
-        echo "- OpenBAS (Simulations): http://localhost:2021"
-        echo "- Activepieces (Auto): http://localhost:2022"
-        echo "- Code Server: http://localhost:2023"
-        echo "- Ollama: http://localhost:2024"
+        echo "- Activepieces (Auto): http://localhost:2020"
+        echo "- Code Server: http://localhost:2021"
+        echo "- Ollama: http://localhost:2022"
         ;;
     opencti)
         echo "Starting OpenCTI (Fabric)..."
         docker-compose -f docker-compose.opencti.yml up -d
         echo
-        echo "OpenCTI started successfully. Access at http://localhost:2020"
+        echo "OpenCTI started successfully. Access at http://localhost:4000"
         ;;
     openbas)
         echo "Starting OpenBAS (Simulations)..."
         docker-compose -f docker-compose.openbas.yml up -d
         echo
-        echo "OpenBAS started successfully. Access at http://localhost:2021"
+        echo "OpenBAS started successfully. Access at http://localhost:3000"
         ;;
     activepieces)
         echo "Starting Activepieces (Auto)..."
@@ -71,13 +68,13 @@ case "$COMMAND" in
         echo "Starting Code Server..."
         docker-compose -f docker-compose.code-server.yml up -d
         echo
-        echo "Code Server started successfully. Access at http://localhost:2023"
+        echo "Code Server started successfully. Access at http://localhost:2021"
         ;;
     ollama)
         echo "Starting Ollama..."
         docker-compose -f docker-compose.ollama.yml up -d
         echo
-        echo "Ollama started successfully. Access at http://localhost:2024"
+        echo "Ollama started successfully. Access at http://localhost:2022"
         ;;
     stop)
         echo "Stopping all Rica components..."

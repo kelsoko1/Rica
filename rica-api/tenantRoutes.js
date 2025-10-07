@@ -4,10 +4,10 @@
  * Provides REST API endpoints for tenant provisioning, management, and monitoring
  */
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tenantManager = require('./tenantManager');
-const creditResourceManager = require('./creditResourceManager');
+import tenantManager from './tenantManager.js';
+import creditResourceManager from './creditResourceManager.js';
 
 // Middleware to verify Firebase authentication
 // In production, this should verify the Firebase ID token
@@ -475,4 +475,4 @@ router.get('/pricing/estimate', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

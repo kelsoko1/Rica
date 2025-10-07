@@ -40,6 +40,8 @@ spec:
           value: "production"
         - name: REACT_APP_API_URL
           value: "http://rica-api.rica-tenant-${TENANT_ID}.svc.cluster.local:3001"
+        - name: REACT_APP_RICA_UI_PORT
+          value: "3030"
         - name: REACT_APP_OPENCTI_URL
           value: "http://opencti.rica-tenant-${TENANT_ID}.svc.cluster.local:4000"
         - name: REACT_APP_OPENBAS_URL

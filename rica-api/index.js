@@ -1,17 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const { request, gql } = require('graphql-request');
-const axios = require('axios');
-const cors = require('cors');
-const morgan = require('morgan');
-const helmet = require('helmet');
-const compression = require('compression');
-const winston = require('winston');
-const fs = require('fs');
-const path = require('path');
-const { check, validationResult } = require('express-validator');
-const rateLimit = require('express-rate-limit');
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import bodyParser from 'body-parser';
+import { request, gql } from 'graphql-request';
+import axios from 'axios';
+import cors from 'cors';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import compression from 'compression';
+import winston from 'winston';
+import fs from 'fs';
+import path from 'path';
+import { check, validationResult } from 'express-validator';
+import rateLimit from 'express-rate-limit';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import tenantRoutes from './tenantRoutes.js';
+import creditResourceManager from './creditResourceManager.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Create logs directory if it doesn't exist
 const logsDir = path.join(__dirname, 'logs');
@@ -155,8 +163,34 @@ function ensureWallet(org) {
   return wallets[org];
 }
 
+// Health check endpoints (before auth middleware)
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: NODE_ENV,
+    uptime: process.uptime()
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: NODE_ENV,
+    uptime: process.uptime()
+  });
+});
+
 // API Key authentication middleware
 const apiKeyAuth = (req, res, next) => {
+  // Skip auth for health check endpoints
+  if (req.path === '/health' || req.path === '/api/health') {
+    return next();
+  }
+  
   const key = req.headers['x-api-key'] || '';
   
   if(!key || key !== API_KEY) {
@@ -179,15 +213,11 @@ const apiKeyAuth = (req, res, next) => {
 // Apply API key auth to all routes
 app.use(apiKeyAuth);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    environment: NODE_ENV
-  });
-});
+// Mount tenant management routes
+app.use('/api/tenants', tenantRoutes);
+
+// Initialize credit monitoring
+creditResourceManager.initialize();
 
 // Proxy OpenCTI GraphQL - example: fetch top threat actors (paginated)
 app.get('/api/threat-actors', [
