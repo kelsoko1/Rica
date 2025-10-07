@@ -1,0 +1,452 @@
+/* DeviceManager.css */
+
+.device-manager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: #e6edf7;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(62, 123, 250, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(108, 92, 231, 0.04) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0e14 0%, #0f1215 100%);
+  padding: 32px;
+  overflow-y: auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.device-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid transparent;
+  background: linear-gradient(90deg, transparent 0%, rgba(62, 123, 250, 0.3) 50%, transparent 100%) bottom / 100% 2px no-repeat;
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.device-manager-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #e6edf7 50%, #a7b6c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.device-manager-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.action-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.action-button.start {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 4px 16px rgba(39, 174, 96, 0.3),
+    0 0 20px rgba(39, 174, 96, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.action-button.start:hover {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 24px rgba(39, 174, 96, 0.4),
+    0 0 40px rgba(39, 174, 96, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.action-button.start:hover::before {
+  left: 100%;
+}
+
+.action-button.stop {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 4px 16px rgba(231, 76, 60, 0.3),
+    0 0 20px rgba(231, 76, 60, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.action-button.stop:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 24px rgba(231, 76, 60, 0.4),
+    0 0 40px rgba(231, 76, 60, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.action-button.stop:hover::before {
+  left: 100%;
+}
+
+.status-message {
+  background: linear-gradient(135deg, rgba(62, 123, 250, 0.1) 0%, rgba(108, 92, 231, 0.08) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+  color: #e6edf7;
+  border: 1px solid rgba(62, 123, 250, 0.2);
+  box-shadow: 
+    0 4px 16px rgba(62, 123, 250, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: slideInRight 0.4s ease-out;
+}
+
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid #333333;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: none;
+  color: #a0a0a0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: #ffffff;
+}
+
+.tab-button.active {
+  color: #4285f4;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4285f4;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Devices Tab */
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.device-card {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #333333;
+}
+
+.device-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-color: #4285f4;
+}
+
+.device-card.connected {
+  border-color: #34a853;
+}
+
+.device-card.disconnected {
+  border-color: #ea4335;
+}
+
+.device-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #333333;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.device-info {
+  flex: 1;
+}
+
+.device-info h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  color: #ffffff;
+}
+
+.device-ip {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin: 0 0 5px 0;
+}
+
+.device-type {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin: 0 0 10px 0;
+  text-transform: capitalize;
+}
+
+.device-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.device-status.discovered {
+  background-color: #3c4043;
+  color: #ffffff;
+}
+
+.device-status.connected {
+  background-color: #2d7d46;
+  color: #ffffff;
+}
+
+.device-status.disconnected {
+  background-color: #c53929;
+  color: #ffffff;
+}
+
+.device-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.connect-button, .disconnect-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.connect-button {
+  background-color: #4285f4;
+  color: #ffffff;
+}
+
+.connect-button:hover {
+  background-color: #5a95f5;
+}
+
+.disconnect-button {
+  background-color: #c53929;
+  color: #ffffff;
+}
+
+.disconnect-button:hover {
+  background-color: #ea4335;
+}
+
+.no-devices, .no-device-selected, .no-feeds {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #a0a0a0;
+}
+
+/* Data Tab */
+.data-feeds {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.data-feeds h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 20px 0;
+  color: #ffffff;
+}
+
+.feeds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feed-item {
+  background-color: #333333;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.feed-header h4 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: #ffffff;
+}
+
+.feed-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.feed-status.active {
+  background-color: #2d7d46;
+  color: #ffffff;
+}
+
+.feed-status.inactive {
+  background-color: #c53929;
+  color: #ffffff;
+}
+
+.feed-details {
+  font-size: 14px;
+  color: #a0a0a0;
+}
+
+.feed-details p {
+  margin: 5px 0;
+}
+
+/* Settings Tab */
+.settings-form {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #333333;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.apply-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background-color: #4285f4;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.apply-button:hover {
+  background-color: #5a95f5;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .devices-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .device-manager-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .device-manager-actions {
+    width: 100%;
+  }
+  
+  .action-button {
+    flex: 1;
+    justify-content: center;
+  }
+}

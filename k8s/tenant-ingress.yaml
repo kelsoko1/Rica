@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tenant-ingress
+  namespace: rica-tenant-${TENANT_ID}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    # WebSocket support for Code Server and Ollama
+    nginx.ingress.kubernetes.io/websocket-services: "code-server,ollama"
+    # CORS configuration
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://rica.example.com"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+spec:
+  tls:
+  - hosts:
+    - ${TENANT_SUBDOMAIN}.rica.example.com
+    secretName: tenant-tls-${TENANT_ID}
+  rules:
+  - host: ${TENANT_SUBDOMAIN}.rica.example.com
+    http:
+      paths:
+      # Rica UI - Main application
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rica-ui
+            port:
+              number: 80
+      
+      # Activepieces - Automation
+      - path: /activepieces
+        pathType: Prefix
+        backend:
+          service:
+            name: activepieces
+            port:
+              number: 2020
+      
+      # Code Server - VS Code
+      - path: /code
+        pathType: Prefix
+        backend:
+          service:
+            name: code-server
+            port:
+              number: 2021
+      
+      # Ollama - LLM Server
+      - path: /ollama
+        pathType: Prefix
+        backend:
+          service:
+            name: ollama
+            port:
+              number: 2022

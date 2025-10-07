@@ -1,0 +1,364 @@
+# Activepieces - Automation Platform
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activepieces
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: activepieces
+    tenant-id: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: activepieces
+      tenant-id: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: activepieces
+        tenant-id: ${TENANT_ID}
+    spec:
+      serviceAccountName: tenant-service-account
+      containers:
+      - name: activepieces
+        image: activepieces/activepieces:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: AP_FRONTEND_URL
+          value: "http://activepieces.rica-tenant-${TENANT_ID}.svc.cluster.local:2020"
+        - name: AP_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tenant-secrets
+              key: activepieces-api-key
+        - name: AP_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tenant-secrets
+              key: activepieces-encryption-key
+        - name: AP_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tenant-secrets
+              key: activepieces-jwt-secret
+        - name: AP_POSTGRES_DATABASE
+          value: activepieces
+        - name: AP_POSTGRES_HOST
+          value: postgres.rica-tenant-${TENANT_ID}.svc.cluster.local
+        - name: AP_POSTGRES_PORT
+          value: "5432"
+        - name: AP_POSTGRES_USERNAME
+          value: activepieces
+        - name: AP_POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tenant-secrets
+              key: postgres-password
+        - name: AP_REDIS_HOST
+          value: redis.rica-tenant-${TENANT_ID}.svc.cluster.local
+        - name: AP_REDIS_PORT
+          value: "6379"
+        - name: AP_SIGN_UP_ENABLED
+          value: "false"
+        - name: AP_TELEMETRY_ENABLED
+          value: "false"
+        resources:
+          requests:
+            cpu: ${ACTIVEPIECES_CPU_REQUEST}
+            memory: ${ACTIVEPIECES_MEMORY_REQUEST}
+          limits:
+            cpu: ${ACTIVEPIECES_CPU_LIMIT}
+            memory: ${ACTIVEPIECES_MEMORY_LIMIT}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: activepieces
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  selector:
+    app: activepieces
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 2020
+    targetPort: 80
+    name: http
+  type: ClusterIP
+
+# Code Server - VS Code in Browser
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: code-server
+    tenant-id: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-server
+      tenant-id: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: code-server
+        tenant-id: ${TENANT_ID}
+    spec:
+      serviceAccountName: tenant-service-account
+      containers:
+      - name: code-server
+        image: codercom/code-server:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        args:
+        - --auth
+        - none
+        - --bind-addr
+        - 0.0.0.0:8080
+        env:
+        - name: PASSWORD
+          value: ""
+        resources:
+          requests:
+            cpu: ${CODE_SERVER_CPU_REQUEST}
+            memory: ${CODE_SERVER_MEMORY_REQUEST}
+          limits:
+            cpu: ${CODE_SERVER_CPU_LIMIT}
+            memory: ${CODE_SERVER_MEMORY_LIMIT}
+        volumeMounts:
+        - name: code-server-data
+          mountPath: /home/coder/project
+      volumes:
+      - name: code-server-data
+        persistentVolumeClaim:
+          claimName: code-server-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-server
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  selector:
+    app: code-server
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 2021
+    targetPort: 8080
+    name: http
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: code-server-pvc
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${CODE_SERVER_STORAGE}
+
+# Ollama - Local LLM Server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: ollama
+    tenant-id: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+      tenant-id: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: ollama
+        tenant-id: ${TENANT_ID}
+    spec:
+      serviceAccountName: tenant-service-account
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        ports:
+        - containerPort: 11434
+          name: http
+        resources:
+          requests:
+            cpu: ${OLLAMA_CPU_REQUEST}
+            memory: ${OLLAMA_MEMORY_REQUEST}
+          limits:
+            cpu: ${OLLAMA_CPU_LIMIT}
+            memory: ${OLLAMA_MEMORY_LIMIT}
+        volumeMounts:
+        - name: ollama-data
+          mountPath: /root/.ollama
+      volumes:
+      - name: ollama-data
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  selector:
+    app: ollama
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 2022
+    targetPort: 11434
+    name: http
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-pvc
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${OLLAMA_STORAGE}
+
+# Supporting Services - PostgreSQL
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: postgres
+    tenant-id: ${TENANT_ID}
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      tenant-id: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tenant-id: ${TENANT_ID}
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tenant-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          value: postgres
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  selector:
+    app: postgres
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgres
+  type: ClusterIP
+
+# Supporting Services - Redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: redis
+    tenant-id: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      tenant-id: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: redis
+        tenant-id: ${TENANT_ID}
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+          name: redis
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: rica-tenant-${TENANT_ID}
+spec:
+  selector:
+    app: redis
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: redis
+  type: ClusterIP

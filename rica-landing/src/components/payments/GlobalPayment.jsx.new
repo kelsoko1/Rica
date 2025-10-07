@@ -1,0 +1,533 @@
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Typography,
+  CircularProgress,
+  Alert,
+  Paper,
+  Divider,
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  FormHelperText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Link,
+  Stepper,
+  Step,
+  StepLabel,
+  Tabs,
+  Tab
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import paymentService from '../../services/paymentService.jsx';
+import PhoneIcon from '@mui/icons-material/Phone';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+
+const PaymentContainer = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const ProviderLogo = styled('img')(({ theme }) => ({
+  height: 40,
+  marginRight: theme.spacing(2),
+}));
+
+const ProviderOption = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const GlobalPayment = ({ 
+  amount, 
+  currency = 'TZS', 
+  onSuccess, 
+  onError, 
+  buttonText = 'Pay Now',
+  reference = `RICA-${Date.now()}`
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [transaction, setTransaction] = useState(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState('mobile_money');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [statusCheckInterval, setStatusCheckInterval] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
+  const [cardDetails, setCardDetails] = useState({
+    number: '',
+    expiry: '',
+    cvc: '',
+    name: ''
+  });
+  const [cardErrors, setCardErrors] = useState({});
+  const [walletType, setWalletType] = useState('paypal');
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [checkingStatus, setCheckingStatus] = useState(false);
+
+  // Steps for the payment process
+  const steps = ['Enter Details', 'Confirm Payment', 'Payment Status'];
+
+  // Handle phone number change
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    setPhoneNumber(value);
+    
+    // Clear error when user starts typing
+    if (phoneError) {
+      setPhoneError('');
+    }
+  };
+
+  // Handle payment method change
+  const handlePaymentMethodChange = (event, newValue) => {
+    setPaymentMethod(newValue);
+  };
+
+  // Handle card details change
+  const handleCardDetailsChange = (field) => (e) => {
+    setCardDetails({
+      ...cardDetails,
+      [field]: e.target.value
+    });
+    
+    // Clear error for this field
+    if (cardErrors[field]) {
+      setCardErrors({
+        ...cardErrors,
+        [field]: ''
+      });
+    }
+  };
+
+  // Handle wallet type change
+  const handleWalletTypeChange = (e) => {
+    setWalletType(e.target.value);
+  };
+
+  // Handle payment submission
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Validate phone number for mobile money payments
+      if (paymentMethod === 'mobile_money') {
+        if (!phoneNumber) {
+          setPhoneError('Phone number is required');
+          setLoading(false);
+          return;
+        }
+        
+        // Validate phone number format
+        if (!phoneNumber.match(/^\\+?\\d{1,15}$/)) {
+          setPhoneError('Invalid phone number format. Use E.164 format (e.g., +255123456789)');
+          setLoading(false);
+          return;
+        }
+        
+        setPhoneError('');
+      }
+      
+      // Validate card details for card payments
+      if (paymentMethod === 'card') {
+        const errors = {};
+        
+        if (!cardDetails.number) {
+          errors.number = 'Card number is required';
+        } else if (!cardDetails.number.match(/^\\d{16}$/)) {
+          errors.number = 'Invalid card number';
+        }
+        
+        if (!cardDetails.expiry) {
+          errors.expiry = 'Expiry date is required';
+        } else if (!cardDetails.expiry.match(/^\\d{2}\\/\\d{2}$/)) {
+          errors.expiry = 'Invalid expiry date format (MM/YY)';
+        }
+        
+        if (!cardDetails.cvc) {
+          errors.cvc = 'CVC is required';
+        } else if (!cardDetails.cvc.match(/^\\d{3,4}$/)) {
+          errors.cvc = 'Invalid CVC';
+        }
+        
+        if (!cardDetails.name) {
+          errors.name = 'Cardholder name is required';
+        }
+        
+        if (Object.keys(errors).length > 0) {
+          setCardErrors(errors);
+          setLoading(false);
+          return;
+        }
+        
+        setCardErrors({});
+      }
+      
+      // Create a description based on payment method
+      const description = `Rica ${paymentMethod === 'mobile_money' ? 'Mobile Money' : paymentMethod === 'card' ? 'Card' : 'Wallet'} Payment`;
+      
+      try {
+        // Use the payment service to create a payment using ClickPesa collection account
+        const result = await paymentService.createClickPesaPayment(
+          amount,
+          phoneNumber,
+          description,
+          reference,
+          paymentMethod
+        );
+        
+        // Store transaction details
+        setTransaction(result);
+        
+        // Move to next step
+        setActiveStep(1);
+        
+        // Start checking payment status
+        startStatusCheck(result.transactionId);
+      } catch (paymentError) {
+        console.error('Payment error:', paymentError);
+        setError(paymentError.message || 'Failed to process payment');
+        if (onError) {
+          onError(paymentError);
+        }
+      }
+    } catch (err) {
+      console.error('Payment error:', err);
+      setError(err.message || 'Failed to process payment');
+      if (onError) {
+        onError(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Start status check interval
+  const startStatusCheck = (transactionId) => {
+    // Clear any existing interval
+    if (statusCheckInterval) {
+      clearInterval(statusCheckInterval);
+    }
+    
+    // Check status immediately
+    checkStatus(transactionId);
+    
+    // Set up interval to check status every 5 seconds
+    const interval = setInterval(() => {
+      checkStatus(transactionId);
+    }, 5000);
+    
+    setStatusCheckInterval(interval);
+  };
+  
+  // Check payment status
+  const checkStatus = async (transactionId) => {
+    if (!transactionId) return;
+    
+    setCheckingStatus(true);
+    
+    try {
+      // Use the payment service to check payment status
+      const status = await paymentService.checkClickPesaPaymentStatus(transactionId);
+      setPaymentStatus(status);
+      
+      // If payment is completed or failed, stop checking
+      if (status.status === 'SUCCESS' || status.status === 'COMPLETED') {
+        if (statusCheckInterval) {
+          clearInterval(statusCheckInterval);
+          setStatusCheckInterval(null);
+        }
+        
+        // Move to success step
+        setActiveStep(2);
+        
+        // Call onSuccess callback
+        if (onSuccess) {
+          onSuccess(status);
+        }
+      } else if (status.status === 'FAILED') {
+        if (statusCheckInterval) {
+          clearInterval(statusCheckInterval);
+          setStatusCheckInterval(null);
+        }
+        
+        // Set error
+        setError('Payment failed. Please try again.');
+        
+        // Move to final step to show failure
+        setActiveStep(2);
+        
+        // Call onError callback
+        if (onError) {
+          onError(new Error('Payment failed'));
+        }
+      }
+    } catch (err) {
+      console.error('Error checking payment status:', err);
+      setError('Error checking payment status. Please check your payment history.');
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
+
+  // Clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (statusCheckInterval) {
+        clearInterval(statusCheckInterval);
+      }
+    };
+  }, [statusCheckInterval]);
+
+  // Render payment status
+  const renderPaymentStatus = () => {
+    if (!paymentStatus) {
+      return (
+        <Box sx={{ textAlign: 'center', py: 3 }}>
+          <CircularProgress />
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            Checking payment status...
+          </Typography>
+        </Box>
+      );
+    }
+
+    if (paymentStatus.status === 'SUCCESS' || paymentStatus.status === 'COMPLETED') {
+      return (
+        <Box sx={{ textAlign: 'center', py: 3 }}>
+          <CheckCircleOutlineIcon color="success" sx={{ fontSize: 60 }} />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Payment Successful
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+            Your payment of {paymentStatus.amount} {paymentStatus.currency} has been processed successfully.
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            Transaction ID: {paymentStatus.transactionId}
+          </Typography>
+        </Box>
+      );
+    }
+
+    if (paymentStatus.status === 'FAILED') {
+      return (
+        <Box sx={{ textAlign: 'center', py: 3 }}>
+          <ErrorOutlineIcon color="error" sx={{ fontSize: 60 }} />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Payment Failed
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+            Your payment could not be processed. Please try again.
+          </Typography>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            sx={{ mt: 2 }}
+            onClick={() => setActiveStep(0)}
+          >
+            Try Again
+          </Button>
+        </Box>
+      );
+    }
+
+    return (
+      <Box sx={{ textAlign: 'center', py: 3 }}>
+        <HourglassEmptyIcon color="warning" sx={{ fontSize: 60 }} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Payment Processing
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+          Your payment is being processed. Please wait...
+        </Typography>
+        <CircularProgress size={24} sx={{ mt: 2 }} />
+      </Box>
+    );
+  };
+
+  return (
+    <PaymentContainer elevation={1}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
+      
+      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      
+      {activeStep === 0 && (
+        <>
+          <Box>
+            <Tabs
+              value={paymentMethod}
+              onChange={handlePaymentMethodChange}
+              variant="fullWidth"
+              sx={{ mb: 3 }}
+            >
+              <Tab 
+                icon={<PhoneIcon />} 
+                label="Mobile Money" 
+                value="mobile_money" 
+              />
+              <Tab 
+                icon={<CreditCardIcon />} 
+                label="Credit Card" 
+                value="card" 
+              />
+              <Tab 
+                icon={<AccountBalanceWalletIcon />} 
+                label="Digital Wallet" 
+                value="wallet" 
+              />
+            </Tabs>
+            
+            <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }}>
+              {paymentMethod === 'mobile_money' && (
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  variant="outlined"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                  error={!!phoneError}
+                  helperText={phoneError || 'Enter your phone number in international format (e.g., +255123456789)'}
+                  InputProps={{
+                    startAdornment: <PhoneIcon color="action" sx={{ mr: 1 }} />,
+                  }}
+                  sx={{ mb: 3 }}
+                />
+              )}
+              
+              {paymentMethod === 'card' && (
+                <>
+                  <TextField
+                    fullWidth
+                    label="Card Number"
+                    variant="outlined"
+                    value={cardDetails.number}
+                    onChange={handleCardDetailsChange('number')}
+                    error={!!cardErrors.number}
+                    helperText={cardErrors.number}
+                    sx={{ mb: 3 }}
+                  />
+                  
+                  <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                    <TextField
+                      label="Expiry Date"
+                      variant="outlined"
+                      value={cardDetails.expiry}
+                      onChange={handleCardDetailsChange('expiry')}
+                      placeholder="MM/YY"
+                      error={!!cardErrors.expiry}
+                      helperText={cardErrors.expiry}
+                      sx={{ flex: 1 }}
+                    />
+                    
+                    <TextField
+                      label="CVC"
+                      variant="outlined"
+                      value={cardDetails.cvc}
+                      onChange={handleCardDetailsChange('cvc')}
+                      error={!!cardErrors.cvc}
+                      helperText={cardErrors.cvc}
+                      sx={{ flex: 1 }}
+                    />
+                  </Box>
+                  
+                  <TextField
+                    fullWidth
+                    label="Cardholder Name"
+                    variant="outlined"
+                    value={cardDetails.name}
+                    onChange={handleCardDetailsChange('name')}
+                    error={!!cardErrors.name}
+                    helperText={cardErrors.name}
+                    sx={{ mb: 3 }}
+                  />
+                </>
+              )}
+              
+              {paymentMethod === 'wallet' && (
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel id="wallet-type-label">Wallet Type</InputLabel>
+                  <Select
+                    labelId="wallet-type-label"
+                    value={walletType}
+                    onChange={handleWalletTypeChange}
+                    label="Wallet Type"
+                  >
+                    <MenuItem value="paypal">PayPal</MenuItem>
+                    <MenuItem value="applepay">Apple Pay</MenuItem>
+                    <MenuItem value="googlepay">Google Pay</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+              
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Amount: {amount} {currency}
+                </Typography>
+                
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  type="submit"
+                  disabled={loading}
+                  startIcon={loading && <CircularProgress size={20} color="inherit" />}
+                >
+                  {buttonText}
+                </Button>
+              </Box>
+            </form>
+          </Box>
+        </>
+      )}
+      
+      {activeStep === 1 && (
+        <Box sx={{ textAlign: 'center', py: 3 }}>
+          <CircularProgress />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Processing Payment
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+            {paymentMethod === 'mobile_money' 
+              ? 'Please check your phone for a payment authorization request.' 
+              : 'Your payment is being processed. Please wait...'}
+          </Typography>
+          {transaction && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              Transaction ID: {transaction.transactionId}
+            </Typography>
+          )}
+        </Box>
+      )}
+      
+      {activeStep === 2 && renderPaymentStatus()}
+    </PaymentContainer>
+  );
+};
+
+export default GlobalPayment;

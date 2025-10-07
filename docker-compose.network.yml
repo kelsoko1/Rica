@@ -1,0 +1,15 @@
+version: '3.8'
+
+# This file defines the shared Rica network
+# Run this first: docker-compose -f docker-compose.network.yml up -d
+# This creates the network that all other services will use
+
+networks:
+  rica-network:
+    name: rica-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/16
+          gateway: 172.25.0.1

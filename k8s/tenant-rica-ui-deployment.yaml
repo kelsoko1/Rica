@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rica-ui
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: rica-ui
+    tenant-id: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rica-ui
+      tenant-id: ${TENANT_ID}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: rica-ui
+        tenant-id: ${TENANT_ID}
+    spec:
+      serviceAccountName: tenant-service-account
+      containers:
+      - name: rica-ui
+        image: ${REGISTRY}/rica-ui:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: TENANT_ID
+          value: ${TENANT_ID}
+        - name: USER_EMAIL
+          value: ${USER_EMAIL}
+        - name: NODE_ENV
+          value: "production"
+        - name: REACT_APP_API_URL
+          value: "http://rica-api.rica-tenant-${TENANT_ID}.svc.cluster.local:3001"
+        - name: REACT_APP_OPENCTI_URL
+          value: "http://opencti.rica-tenant-${TENANT_ID}.svc.cluster.local:4000"
+        - name: REACT_APP_OPENBAS_URL
+          value: "http://openbas.rica-tenant-${TENANT_ID}.svc.cluster.local:3000"
+        - name: REACT_APP_ACTIVEPIECES_URL
+          value: "http://activepieces.rica-tenant-${TENANT_ID}.svc.cluster.local:2020"
+        - name: REACT_APP_CODE_SERVER_URL
+          value: "http://code-server.rica-tenant-${TENANT_ID}.svc.cluster.local:2021"
+        - name: REACT_APP_OLLAMA_URL
+          value: "http://ollama.rica-tenant-${TENANT_ID}.svc.cluster.local:2022"
+        - name: REACT_APP_TENANT_NAMESPACE
+          value: rica-tenant-${TENANT_ID}
+        resources:
+          requests:
+            cpu: ${UI_CPU_REQUEST}
+            memory: ${UI_MEMORY_REQUEST}
+          limits:
+            cpu: ${UI_CPU_LIMIT}
+            memory: ${UI_MEMORY_LIMIT}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: tenant-config
+          mountPath: /etc/rica/config
+          readOnly: true
+      volumes:
+      - name: tenant-config
+        configMap:
+          name: tenant-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rica-ui
+  namespace: rica-tenant-${TENANT_ID}
+  labels:
+    app: rica-ui
+    tenant-id: ${TENANT_ID}
+spec:
+  selector:
+    app: rica-ui
+    tenant-id: ${TENANT_ID}
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tenant-config
+  namespace: rica-tenant-${TENANT_ID}
+data:
+  tenant.json: |
+    {
+      "tenantId": "${TENANT_ID}",
+      "userEmail": "${USER_EMAIL}",
+      "subscriptionTier": "${SUBSCRIPTION_TIER}",
+      "createdAt": "${CREATED_AT}",
+      "features": {
+        "opencti": ${FEATURE_OPENCTI},
+        "openbas": ${FEATURE_OPENBAS},
+        "activepieces": ${FEATURE_ACTIVEPIECES},
+        "codeServer": ${FEATURE_CODE_SERVER},
+        "ollama": ${FEATURE_OLLAMA}
+      },
+      "limits": {
+        "maxProfiles": ${MAX_PROFILES},
+        "maxTeams": ${MAX_TEAMS},
+        "maxStorage": "${MAX_STORAGE}"
+      }
+    }
