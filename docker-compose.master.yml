@@ -21,8 +21,6 @@ services:
       - rica-ui
       - rica-landing
       - rica-api
-      - opencti
-      - openbas
       - activepieces
       - code-server
       - ollama
@@ -74,13 +72,9 @@ services:
       - OLLAMA_EXTERNAL_URL=http://localhost:2022
       - API_KEY=${API_KEY:-changeme_in_production}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
-      - OPENCTI_URL=http://opencti:4000
-      - OPENBAS_URL=http://openbas:3000
       - ACTIVEPIECES_URL=http://activepieces:80
     depends_on:
       - ollama
-      - opencti
-      - openbas
       - activepieces
     networks:
       - rica-network
@@ -369,9 +363,6 @@ services:
 volumes:
   ollama_data:
   redis_data:
-  es_data:
-  minio_data:
-  rabbitmq_data:
   postgres_data:
   code_data:
   activepieces_data:

@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json* ./
-RUN npm ci --production
+RUN npm install --production --no-optional
 
 # Production image
 FROM node:18-alpine
