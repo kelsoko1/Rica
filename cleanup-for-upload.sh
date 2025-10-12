@@ -215,8 +215,8 @@ See [QUICKSTART.md](QUICKSTART.md) for detailed setup instructions.
 
 ## Features
 
-- **Threat Intelligence**: OpenCTI integration
-- **Security Simulations**: OpenBAS integration
+- **Threat Intelligence**:  integration
+- **Security Simulations**:  integration
 - **Automation**: Activepieces workflows
 - **AI Integration**: Ollama/DeepSeek support
 - **Code Editor**: VS Code in browser
@@ -258,11 +258,11 @@ DEEPSEEK_API_KEY=
 # Database
 POSTGRES_PASSWORD=changeme
 
-# OpenCTI
-OPENCTI_ADMIN_PASSWORD=changeme
+# 
+_ADMIN_PASSWORD=changeme
 
-# OpenBAS
-OPENBAS_ADMIN_PASSWORD=changeme
+# 
+_ADMIN_PASSWORD=changeme
 
 # Activepieces
 AP_API_KEY=changeme

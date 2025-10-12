@@ -18,23 +18,23 @@ case "$COMMAND" in
         echo "All headless servers started successfully."
         echo
         echo "Access the services at:"
-        echo "- OpenCTI (Fabric): http://localhost:2020"
-        echo "- OpenBAS (Simulations): http://localhost:2021"
+        echo "-  (Fabric): http://localhost:2020"
+        echo "-  (Simulations): http://localhost:2021"
         echo "- Activepieces (Auto): http://localhost:2022"
         echo "- Code Server: http://localhost:2023"
         echo "- Ollama: http://localhost:11434"
         ;;
-    opencti)
-        echo "Starting OpenCTI (Fabric)..."
-        docker-compose -f docker-compose.opencti.yml up -d
+    )
+        echo "Starting  (Fabric)..."
+        docker-compose -f docker-compose..yml up -d
         echo
-        echo "OpenCTI started successfully. Access at http://localhost:2020"
+        echo " started successfully. Access at http://localhost:2020"
         ;;
-    openbas)
-        echo "Starting OpenBAS (Simulations)..."
-        docker-compose -f docker-compose.openbas.yml up -d
+    )
+        echo "Starting  (Simulations)..."
+        docker-compose -f docker-compose..yml up -d
         echo
-        echo "OpenBAS started successfully. Access at http://localhost:2021"
+        echo " started successfully. Access at http://localhost:2021"
         ;;
     activepieces)
         echo "Starting Activepieces (Auto)..."
@@ -62,15 +62,15 @@ case "$COMMAND" in
         ;;
     status)
         echo "Checking status of headless servers..."
-        docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E 'opencti|openbas|activepieces|code-server|ollama'
+        docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E '||activepieces|code-server|ollama'
         ;;
     help|*)
         echo "Usage: ./start-headless-servers.sh [command]"
         echo
         echo "Commands:"
         echo "  all           Start all headless servers"
-        echo "  opencti       Start OpenCTI (Fabric)"
-        echo "  openbas       Start OpenBAS (Simulations)"
+        echo "         Start  (Fabric)"
+        echo "         Start  (Simulations)"
         echo "  activepieces  Start Activepieces (Auto)"
         echo "  code-server   Start Code Server"
         echo "  ollama        Start Ollama"
@@ -80,7 +80,7 @@ case "$COMMAND" in
         echo
         echo "Examples:"
         echo "  ./start-headless-servers.sh all"
-        echo "  ./start-headless-servers.sh opencti"
+        echo "  ./start-headless-servers.sh "
         echo "  ./start-headless-servers.sh stop"
         ;;
 esac

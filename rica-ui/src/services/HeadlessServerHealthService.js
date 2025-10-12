@@ -9,13 +9,15 @@ class HeadlessServerHealthService {
   constructor() {
     this.serverStatus = {
       auto: { isHealthy: false, lastChecked: null, error: null },
-      code: { isHealthy: false, lastChecked: null, error: null }
+      code: { isHealthy: false, lastChecked: null, error: null },
+      metaverse: { isHealthy: false, lastChecked: null, error: null }
     };
     
     this.serverUrls = {
       auto: process.env.REACT_APP_AUTO_URL || 'http://localhost:2020',
       code: process.env.REACT_APP_CODE_SERVER_URL || 'http://localhost:2021',
-      ollama: process.env.REACT_APP_OLLAMA_URL || 'http://localhost:2022'
+      ollama: process.env.REACT_APP_OLLAMA_URL || 'http://localhost:2022',
+      metaverse: process.env.REACT_APP_VIRCADIA_URL || 'http://localhost:2023'
     };
     
     this.checkIntervalMs = 60000; // Check every minute

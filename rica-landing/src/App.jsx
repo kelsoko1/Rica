@@ -23,6 +23,7 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import RecurringPaymentsPage from './pages/RecurringPaymentsPage';
 import CreditsPage from './pages/CreditsPage';
+import MonetizationPage from './pages/MonetizationPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -205,6 +206,11 @@ const App = () => {
               <Route path="/credits" element={
                 <ProtectedRoute>
                   <CreditsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/monetization" element={
+                <ProtectedRoute>
+                  <MonetizationPage />
                 </ProtectedRoute>
               } />
             </Routes>

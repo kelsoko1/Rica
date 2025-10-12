@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  pgpool:
+    image: pgpool/pgpool:latest
+    ports:
+      - "2024:5432"
+    environment:
+      - PGPOOL_BACKEND_NODES=0:postgres-primary:5432,1:postgres-standby:5432
+      - PGPOOL_SR_CHECK_USER=repl_user
+      - PGPOOL_SR_CHECK_PASSWORD=${REPLICATION_PASSWORD}
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=${POSTGRES_USER}
+      - PGPOOL_POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGPOOL_NUM_INIT_CHILDREN=50
+      - PGPOOL_MAX_POOL=4
+    healthcheck:
+      test: ["CMD", "pgpool -n || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - rica-network
+
+  postgres-primary:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - REPLICATION_USER=repl_user
+      - REPLICATION_PASSWORD=${REPLICATION_PASSWORD}
+    volumes:
+      - pg_primary_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./create-users-table.sql:/docker-entrypoint-initdb.d/create-users-table.sql
+    networks:
+      - rica-network
+
+  postgres-standby:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pg_standby_data:/var/lib/postgresql/data
+    networks:
+      - rica-network
+    depends_on:
+      - postgres-primary
+
+volumes:
+  pg_primary_data:
+  pg_standby_data:
+
+networks:
+  rica-network:
+    external: true

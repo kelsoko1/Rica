@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import { Link as RouterLink } from 'react-router-dom';
 import { 
   Box, 
@@ -190,7 +190,7 @@ const plans = [
 
 const HomePage = () => {
   const theme = useTheme();
-  const { currentUser } = useAuth();
+  const { currentUser } = useFirebaseAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);

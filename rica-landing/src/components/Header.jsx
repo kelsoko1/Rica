@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useFirebaseAuth } from '../context/FirebaseAuthContext';
 import { Link as RouterLink } from 'react-router-dom';
 import { 
   AppBar, 
@@ -72,7 +72,7 @@ function HideOnScroll(props) {
 }
 
 const Header = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout } = useFirebaseAuth();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

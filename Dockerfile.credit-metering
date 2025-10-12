@@ -1,0 +1,52 @@
+# Multi-stage Dockerfile for Rica Credit Metering Service
+
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY rica-api/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Production stage
+FROM node:18-alpine AS production
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 rica && \
+    adduser -D -s /bin/sh -u 1001 -G rica rica
+
+WORKDIR /app
+
+# Copy built dependencies from builder stage
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy application code
+COPY rica-api/services/creditMeteringService.js ./services/
+COPY rica-api/index.js ./
+COPY rica-api/package.json ./
+
+# Create necessary directories
+RUN mkdir -p /app/logs && \
+    chown -R rica:rica /app
+
+# Switch to non-root user
+USER rica
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD node -e "const http=require('http'); http.get('http://localhost:3100/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start the application
+CMD ["node", "index.js"]
+
+# Expose port
+EXPOSE 3100

@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './CodeEditor.css';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const env = typeof import.meta !== 'undefined' ? import.meta.env : {};
+const API = env.VITE_API_URL || env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 export default function CodeEditor({ file, content, onContentChange }) {
   const [code, setCode] = useState(content || '');
@@ -19,8 +21,9 @@ export default function CodeEditor({ file, content, onContentChange }) {
   const [showMinimap, setShowMinimap] = useState(true);
   const [fontSize, setFontSize] = useState(14);
   const [lineWrapping, setLineWrapping] = useState(false);
-  const [diagnostics, setDiagnostics] = useState([]);
-  
+  const [scrollTop, setScrollTop] = useState(0);
+  const [diagnostics] = useState([]);
+
   const editorRef = useRef(null);
   const linesRef = useRef(null);
   const minimapRef = useRef(null);
@@ -74,109 +77,88 @@ export default function CodeEditor({ file, content, onContentChange }) {
     }
   }, [history, historyIndex]);
   
-  const handleCodeChange = useCallback((e) => {
-    const newCode = e.target.value;
-    setCode(newCode);
+  const updateCode = useCallback((newCodeValue) => {
+    setCode(newCodeValue);
     if (onContentChange) {
-      onContentChange(newCode);
+      onContentChange(newCodeValue);
     }
-    
-    // Update the content in the open tabs
-    setOpenTabs(tabs => tabs.map(tab => 
-      tab.path === activeTab ? { ...tab, content: newCode } : tab
-    ));
+    setOpenTabs((tabs) =>
+      tabs.map((tab) => (tab.path === activeTab ? { ...tab, content: newCodeValue } : tab))
+    );
   }, [activeTab, onContentChange]);
-  
+
+  const handleCodeChange = useCallback((e) => {
+    const newCodeValue = e.target.value;
+    updateCode(newCodeValue);
+    saveToHistory(newCodeValue);
+  }, [saveToHistory, updateCode]);
+
   const handleKeyDown = useCallback((e) => {
-    // Handle tab key for indentation
+    const isMeta = e.ctrlKey || e.metaKey;
+
     if (e.key === 'Tab') {
       e.preventDefault();
       const textarea = e.target;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      
+
+      let newCodeValue;
       if (start === end) {
-        // Insert tab at cursor position
-        const newCode = code.substring(0, start) + '  ' + code.substring(end);
-        setCode(newCode);
-        
-        // Move cursor after the inserted tab
-        setTimeout(() => {
+        newCodeValue = `${code.substring(0, start)}  ${code.substring(end)}`;
+        updateCode(newCodeValue);
+        window.requestAnimationFrame(() => {
           textarea.selectionStart = textarea.selectionEnd = start + 2;
-        }, 0);
+        });
       } else {
-        // Multi-line indentation
         const selectedText = code.substring(start, end);
-        const lines = selectedText.split('\n');
-        const indentedLines = lines.map(line => '  ' + line);
-        const newSelectedText = indentedLines.join('\n');
-        
-        const newCode = code.substring(0, start) + newSelectedText + code.substring(end);
-        setCode(newCode);
-        
-        // Adjust selection to include the added indentation
-        setTimeout(() => {
+        const indented = selectedText
+          .split('\n')
+          .map((line) => `  ${line}`)
+          .join('\n');
+        newCodeValue = `${code.substring(0, start)}${indented}${code.substring(end)}`;
+        updateCode(newCodeValue);
+        window.requestAnimationFrame(() => {
           textarea.selectionStart = start;
-          textarea.selectionEnd = start + newSelectedText.length;
-        }, 0);
+          textarea.selectionEnd = start + indented.length;
+        });
       }
-      
-      // Save to history
-      saveToHistory(code);
+      saveToHistory(newCodeValue);
+      return;
     }
-    
-    // Handle Ctrl+S for save
-    if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+
+    if (isMeta && e.key.toLowerCase() === 's') {
       e.preventDefault();
-      // Save file logic here
       console.log('Saving file:', activeTab);
+      return;
     }
-    
-    // Handle Ctrl+Z for undo
-    if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-      e.preventDefault();
-      if (historyIndex > 0) {
-        setHistoryIndex(historyIndex - 1);
-        setCode(history[historyIndex - 1]);
-      }
-    }
-    
-    // Handle Ctrl+Shift+Z or Ctrl+Y for redo
-    if ((e.key === 'z' && e.ctrlKey && e.shiftKey) || (e.key === 'y' && e.ctrlKey)) {
-      e.preventDefault();
-      if (historyIndex < history.length - 1) {
-        setHistoryIndex(historyIndex + 1);
-        setCode(history[historyIndex + 1]);
-      }
-    }
-  }, [code, historyIndex, history, activeTab, saveToHistory]);
-    
-    // Handle Ctrl+S for save
-    if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      // Save file logic here
-      console.log('Saving file:', activeTab);
-    }
-    
-    // Handle Ctrl+Z for undo
-    if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-      e.preventDefault();
-      if (historyIndex > 0) {
-        // Undo
-        setHistoryIndex(historyIndex - 1);
-        const previousCode = history[historyIndex - 1];
-        setCode(previousCode);
-        if (onContentChange) {
-          onContentChange(previousCode);
+
+    if (isMeta) {
+      if (e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (!e.shiftKey) {
+          // Handle Undo (Ctrl+Z)
+          if (historyIndex > 0) {
+            const newIndex = historyIndex - 1;
+            setHistoryIndex(newIndex);
+            const previousCode = history[newIndex];
+            setCode(previousCode);
+            if (onContentChange) {
+              onContentChange(previousCode);
+            }
+          }
+        } else {
+          // Handle Redo (Ctrl+Shift+Z or Ctrl+Y)
+          if (historyIndex < history.length - 1) {
+            const newIndex = historyIndex + 1;
+            setHistoryIndex(newIndex);
+            const nextCode = history[newIndex];
+            setCode(nextCode);
+            if (onContentChange) {
+              onContentChange(nextCode);
+            }
+          }
         }
-      } else if (e.shiftKey && historyIndex < history.length - 1) {
-        // Redo
-        setHistoryIndex(historyIndex + 1);
-        const nextCode = history[historyIndex + 1];
-        setCode(nextCode);
-        if (onContentChange) {
-          onContentChange(nextCode);
-        }
+        return;
       }
     }
     
@@ -184,7 +166,7 @@ export default function CodeEditor({ file, content, onContentChange }) {
     if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
       saveToHistory(code);
     }
-  };
+  }, [code, history, historyIndex, onContentChange, saveToHistory, updateCode]);
   
   const handleSelectionChange = (e) => {
     setSelection({
@@ -241,17 +223,10 @@ export default function CodeEditor({ file, content, onContentChange }) {
   const applySuggestion = (suggestion) => {
     if (!suggestion) return;
     
-    const newCode = code.substring(0, selection.start) + 
-                   suggestion.text + 
-                   code.substring(selection.end);
-    
-    setCode(newCode);
-    saveToHistory(newCode);
-    
-    if (onContentChange) {
-      onContentChange(newCode);
-    }
-    
+    const newCodeValue =
+      code.substring(0, selection.start) + suggestion.text + code.substring(selection.end);
+    updateCode(newCodeValue);
+    saveToHistory(newCodeValue);
     setSuggestions([]);
   };
   
@@ -279,7 +254,7 @@ export default function CodeEditor({ file, content, onContentChange }) {
             <div 
               key={index} 
               className="suggestion-item"
-              onClick={() => handleSuggestionClick(suggestion)}
+              onClick={() => applySuggestion(suggestion)}
             >
               {suggestion}
             </div>

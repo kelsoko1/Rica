@@ -39,14 +39,14 @@ const Sidebar = ({ visible = true, toggleSidebar }) => {
   // External systems
   const externalSystems = [
     {
-      title: 'OpenCTI',
+      title: '',
       icon: 'security',
-      path: '/opencti',
+      path: '/',
     },
     {
-      title: 'OpenBAS',
+      title: '',
       icon: 'shield',
-      path: '/openbas',
+      path: '/',
     },
   ];
 

@@ -50,19 +50,19 @@ const config = {
     maxConcurrent: parseInt(process.env.COLLECTION_MAX_CONCURRENT || '5', 10),
   },
 
-  // OpenCTI configuration
-  openCTI: {
-    url: process.env.OPENCTI_URL || 'http://localhost:4000',
-    graphqlEndpoint: process.env.OPENCTI_GRAPHQL_ENDPOINT || '/graphql',
-    apiKey: process.env.OPENCTI_API_KEY || '',
-    connectorId: process.env.OPENCTI_CONNECTOR_ID || 'rica-device-connector',
+  //  configuration
+  : {
+    url: process.env._URL || 'http://localhost:4000',
+    graphqlEndpoint: process.env._GRAPHQL_ENDPOINT || '/graphql',
+    apiKey: process.env._API_KEY || '',
+    connectorId: process.env._CONNECTOR_ID || 'rica-device-connector',
   },
 
-  // OpenBAS configuration
-  openBAS: {
-    url: process.env.OPENBAS_URL || 'http://localhost:3000',
-    apiEndpoint: process.env.OPENBAS_API_ENDPOINT || '/api',
-    apiKey: process.env.OPENBAS_API_KEY || '',
+  //  configuration
+  : {
+    url: process.env._URL || 'http://localhost:3000',
+    apiEndpoint: process.env._API_ENDPOINT || '/api',
+    apiKey: process.env._API_KEY || '',
   },
 
   // Logging configuration

@@ -489,11 +489,11 @@ class DataCollectionService {
     }
     
     try {
-      // Send data to OpenCTI
-      await this.sendDataToOpenCTI(collectedData);
+      // Send data to 
+      await this.sendDataTo(collectedData);
       
-      // Send data to OpenBAS
-      await this.sendDataToOpenBAS(collectedData);
+      // Send data to 
+      await this.sendDataTo(collectedData);
       
       logger.info(`Processed data from ${collectedData.length} devices`);
     } catch (error) {
@@ -502,17 +502,17 @@ class DataCollectionService {
   }
 
   /**
-   * Send data to OpenCTI
+   * Send data to 
    * @param {Array} data - Array of collected data
    */
-  async sendDataToOpenCTI(data) {
+  async sendDataTo(data) {
     try {
-      // Format data for OpenCTI
-      const formattedData = this.formatDataForOpenCTI(data);
+      // Format data for 
+      const formattedData = this.formatDataFor(data);
       
-      // Send data to OpenCTI
+      // Send data to 
       const response = await axios.post(
-        `${config.openCTI.url}${config.openCTI.graphqlEndpoint}`,
+        `${config..url}${config..graphqlEndpoint}`,
         {
           query: `
             mutation ImportData($input: StixBundleImportInput!) {
@@ -525,35 +525,35 @@ class DataCollectionService {
           variables: {
             input: {
               data: JSON.stringify(formattedData),
-              connectorId: config.openCTI.connectorId,
+              connectorId: config..connectorId,
             },
           },
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.openCTI.apiKey}`,
+            'Authorization': `Bearer ${config..apiKey}`,
           },
         }
       );
       
-      logger.info('Data sent to OpenCTI successfully');
+      logger.info('Data sent to  successfully');
       return response.data;
     } catch (error) {
-      logger.error('Error sending data to OpenCTI:', error);
+      logger.error('Error sending data to :', error);
       throw error;
     }
   }
 
   /**
-   * Format data for OpenCTI
+   * Format data for 
    * @param {Array} data - Array of collected data
    */
-  formatDataForOpenCTI(data) {
+  formatDataFor(data) {
     // Generate a UUID for the bundle
     const bundleId = require('uuid').v4();
     
-    // Convert device data to STIX format for OpenCTI
+    // Convert device data to STIX format for 
     return {
       type: 'bundle',
       id: `bundle--${bundleId}`,
@@ -626,40 +626,40 @@ class DataCollectionService {
   }
 
   /**
-   * Send data to OpenBAS
+   * Send data to 
    * @param {Array} data - Array of collected data
    */
-  async sendDataToOpenBAS(data) {
+  async sendDataTo(data) {
     try {
-      // Format data for OpenBAS
-      const formattedData = this.formatDataForOpenBAS(data);
+      // Format data for 
+      const formattedData = this.formatDataFor(data);
       
-      // Send data to OpenBAS
+      // Send data to 
       const response = await axios.post(
-        `${config.openBAS.url}${config.openBAS.apiEndpoint}/injects`,
+        `${config..url}${config..apiEndpoint}/injects`,
         formattedData,
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${config.openBAS.apiKey}`,
+            'Authorization': `Bearer ${config..apiKey}`,
           },
         }
       );
       
-      logger.info('Data sent to OpenBAS successfully');
+      logger.info('Data sent to  successfully');
       return response.data;
     } catch (error) {
-      logger.error('Error sending data to OpenBAS:', error);
+      logger.error('Error sending data to :', error);
       throw error;
     }
   }
 
   /**
-   * Format data for OpenBAS
+   * Format data for 
    * @param {Array} data - Array of collected data
    */
-  formatDataForOpenBAS(data) {
-    // Convert device data to OpenBAS format
+  formatDataFor(data) {
+    // Convert device data to  format
     return {
       injects: data.flatMap(item => {
         const injects = [];

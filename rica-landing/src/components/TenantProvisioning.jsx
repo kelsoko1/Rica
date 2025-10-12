@@ -120,8 +120,8 @@ const TenantProvisioning = () => {
         description: 'For individual security professionals',
         features: [
           'All Pay-As-You-Go features',
-          'OpenCTI Threat Intelligence',
-          'OpenBAS Security Simulations',
+          ' Threat Intelligence',
+          ' Security Simulations',
           '20 Browser Profiles',
           '5 Teams',
           '20GB Storage',

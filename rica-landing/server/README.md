@@ -1,6 +1,6 @@
 # Rica API Server
 
-A production-ready API server for Rica with device linking capabilities. This server provides a comprehensive solution for device discovery, management, and data collection, with seamless integration to OpenCTI and OpenBAS platforms.
+A production-ready API server for Rica with device linking capabilities. This server provides a comprehensive solution for device discovery, management, and data collection, with seamless integration to  and  platforms.
 
 ## Features
 
@@ -9,8 +9,8 @@ A production-ready API server for Rica with device linking capabilities. This se
 - **Device Discovery**: Automatically discover devices on your network
 - **Device Management**: Connect to, monitor, and manage devices from a single interface
 - **Data Collection**: Collect security telemetry and system information from connected devices
-- **Integration with OpenCTI**: Feed device data into OpenCTI for threat intelligence analysis
-- **Integration with OpenBAS**: Send device data to OpenBAS for security simulations
+- **Integration with **: Feed device data into  for threat intelligence analysis
+- **Integration with **: Send device data to  for security simulations
 - **Real-time Monitoring**: Monitor device status and security events in real-time
 
 ### Security Features
@@ -57,8 +57,8 @@ The Rica API Server is built with a modular architecture:
 
 - Node.js 16.x or later
 - MongoDB 5.0 or later (optional, for data persistence)
-- OpenCTI instance (optional, for threat intelligence integration)
-- OpenBAS instance (optional, for security simulations)
+-  instance (optional, for threat intelligence integration)
+-  instance (optional, for security simulations)
 
 ### Standard Installation
 
@@ -143,12 +143,12 @@ NODE_ENV=production npm start
 
 ## Device Linking System
 
-The Device Linking System is a core feature that enables seamless integration with OpenCTI and OpenBAS. It provides:
+The Device Linking System is a core feature that enables seamless integration with  and . It provides:
 
 - Automatic device discovery on the network
 - Secure device connection and authentication
 - Real-time data collection from connected devices
-- Data formatting for OpenCTI (STIX format) and OpenBAS (injects)
+- Data formatting for  (STIX format) and  (injects)
 - Configurable collection intervals and data types
 
 For detailed information about the Device Linking System, see the [DEVICE_LINKING_GUIDE.md](../DEVICE_LINKING_GUIDE.md) file.

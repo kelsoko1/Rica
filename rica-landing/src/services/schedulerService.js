@@ -19,6 +19,8 @@ const tasks = new Map();
 // Task status
 const taskStatus = new Map();
 
+const RECURRING_PAYMENTS_TASK_ID = 'process-recurring-payments';
+
 /**
  * Register a task
  * 
@@ -179,8 +181,11 @@ const getTaskStatus = (taskId) => {
  */
 const initializeScheduler = () => {
   try {
+    if (tasks.has(RECURRING_PAYMENTS_TASK_ID)) {
+      return true;
+    }
     // Register recurring payment processing task
-    registerTask('process-recurring-payments', async () => {
+    registerTask(RECURRING_PAYMENTS_TASK_ID, async () => {
       return await recurringPaymentService.processAllDuePayments();
     }, {
       interval: config.isProd ? 3600000 : 60000, // 1 hour in production, 1 minute in development
@@ -254,8 +259,7 @@ const startScheduler = () => {
 const stopScheduler = () => {
   try {
     if (!schedulerIntervalId) {
-      console.warn('Scheduler is not running');
-      return false;
+      return true;
     }
     
     clearInterval(schedulerIntervalId);

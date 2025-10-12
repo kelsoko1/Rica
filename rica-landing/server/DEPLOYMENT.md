@@ -1,6 +1,6 @@
 # Rica API Server Deployment Guide
 
-This guide provides instructions for deploying the Rica API Server in a production environment, including the Device Linking System that integrates with OpenCTI and OpenBAS.
+This guide provides instructions for deploying the Rica API Server in a production environment, including the Device Linking System that integrates with  and .
 
 ## Table of Contents
 
@@ -20,8 +20,8 @@ Before deploying the Rica API Server, ensure you have the following:
 
 - Node.js 16.x or later
 - MongoDB 5.0 or later
-- OpenCTI instance (optional, for threat intelligence integration)
-- OpenBAS instance (optional, for security simulations)
+-  instance (optional, for threat intelligence integration)
+-  instance (optional, for security simulations)
 - Docker and Docker Compose (for containerized deployment)
 - Kubernetes cluster (for Kubernetes deployment)
 - SSL certificate for HTTPS
@@ -45,13 +45,13 @@ ENCRYPTION_KEY=your-secure-encryption-key
 # Database Configuration
 MONGODB_URI=mongodb://username:password@your-mongodb-host:27017/rica
 
-# OpenCTI Configuration
-OPENCTI_URL=https://your-opencti-instance.com
-OPENCTI_API_KEY=your-opencti-api-key
+#  Configuration
+_URL=https://your--instance.com
+_API_KEY=your--api-key
 
-# OpenBAS Configuration
-OPENBAS_URL=https://your-openbas-instance.com
-OPENBAS_API_KEY=your-openbas-api-key
+#  Configuration
+_URL=https://your--instance.com
+_API_KEY=your--api-key
 ```
 
 ### Network Configuration for Device Discovery
@@ -100,8 +100,8 @@ kubectl create secret generic rica-api-secrets \
   --from-literal=JWT_SECRET=your-secure-jwt-secret \
   --from-literal=ENCRYPTION_KEY=your-secure-encryption-key \
   --from-literal=MONGODB_URI=mongodb://username:password@your-mongodb-host:27017/rica \
-  --from-literal=OPENCTI_API_KEY=your-opencti-api-key \
-  --from-literal=OPENBAS_API_KEY=your-openbas-api-key
+  --from-literal=_API_KEY=your--api-key \
+  --from-literal=_API_KEY=your--api-key
 ```
 
 2. Apply the Kubernetes manifests:
@@ -229,7 +229,7 @@ docker-compose up -d
 - Verify device credentials
 - Ensure proper permissions for data collection
 
-#### OpenCTI/OpenBAS Integration Issues
+#### / Integration Issues
 
 - Verify API endpoints are correct
 - Check API keys

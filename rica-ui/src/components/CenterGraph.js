@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import OpenCTISidebar from './OpenCTISidebar';
+import Sidebar from './Sidebar';
 import './CenterGraph.css';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const env = typeof import.meta !== 'undefined' ? import.meta.env : {};
+const API = env.VITE_API_URL || env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 export default function CenterGraph() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -21,7 +22,7 @@ export default function CenterGraph() {
     try {
       setLoading(true);
       
-      // In a real implementation, this would fetch data from the OpenCTI API
+      // In a real implementation, this would fetch data from the  API
       // For now, we'll simulate a response
       
       // Simulate API delay
@@ -272,8 +273,8 @@ export default function CenterGraph() {
             })}
           </svg>
           
-          {/* OpenCTI Sidebar */}
-          <OpenCTISidebar
+          {/*  Sidebar */}
+          <Sidebar
             isOpen={selectedNode !== null}
             onClose={() => setSelectedNode(null)}
             selectedNode={nodes.find(n => n.id === selectedNode)}

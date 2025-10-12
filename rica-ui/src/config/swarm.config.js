@@ -4,13 +4,15 @@
  */
 
 // Environment-specific settings
-const ENV = process.env.NODE_ENV || 'development';
+const env = typeof import.meta !== 'undefined' ? import.meta.env : {};
+const ENV = env.MODE || 'development';
 const isProd = ENV === 'production';
 
 // API endpoints
-const API_BASE = isProd 
-  ? process.env.REACT_APP_API_URL || 'https://api.rica-app.com'
-  : 'http://localhost:3001';
+const API_BASE =
+  env.VITE_API_URL ||
+  env.REACT_APP_API_URL ||
+  (isProd ? 'https://api.rica-app.com' : 'http://localhost:3001');
 
 // Browser configuration
 const BROWSER_CONFIG = {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './HeadlessServerContainer.css';
 import AutoFrame from './AutoFrame';
 import CodeServerFrame from './CodeServerFrame';
+import VircadiaFrame from './VircadiaFrame';
 import ErrorBoundary from './ErrorBoundary';
 import headlessServerHealthService from '../services/HeadlessServerHealthService';
 
@@ -27,6 +28,11 @@ const HeadlessServerContainer = ({ serverType }) => {
       name: 'Code Server',
       component: CodeServerFrame,
       description: 'VS Code in browser for development'
+    },
+    metaverse: {
+      name: 'Metaverse (Vircadia)',
+      component: VircadiaFrame,
+      description: 'Virtual world and metaverse platform'
     }
   };
 

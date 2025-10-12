@@ -161,7 +161,7 @@ const SimsFrame = ({ onError }) => {
       <div className="iframe-container">
         <iframe
           src="http://localhost:2021"
-          title="OpenBAS Security Simulation Platform"
+          title=" Security Simulation Platform"
           className="external-iframe"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
           allow="clipboard-read; clipboard-write"

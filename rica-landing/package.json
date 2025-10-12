@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3000",
     "build": "node scripts/generate-env.js && vite build",
     "build:analyze": "node scripts/generate-env.js && vite build --mode analyze",
     "preview": "vite preview",
-    "start": "vite",
+    "start": "vite --port 3000",
     "server": "cd server && npm start",
     "dev:server": "cd server && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:server\"",

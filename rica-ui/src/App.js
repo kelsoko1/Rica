@@ -167,6 +167,7 @@ export default function App(){
               {activeNavItem === 'threats' && <ThreatDashboard className="threat-dashboard fade-in" />}
               {activeNavItem === 'project' && <HeadlessServerContainer serverType="code" className="code-server-frame fade-in" />}
               {activeNavItem === 'auto' && <HeadlessServerContainer serverType="auto" className="auto-frame fade-in" />}
+              {activeNavItem === 'metaverse' && <HeadlessServerContainer serverType="metaverse" className="vircadia-frame fade-in" />}
               {activeNavItem === 'teams' && <TeamsManager className="teams-manager fade-in" />}
             </div>
           )}

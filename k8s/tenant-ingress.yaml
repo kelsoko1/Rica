@@ -10,8 +10,8 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "100m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    # WebSocket support for Code Server and Ollama
-    nginx.ingress.kubernetes.io/websocket-services: "code-server,ollama"
+    # WebSocket support for Code Server, Ollama, and Vircadia
+    nginx.ingress.kubernetes.io/websocket-services: "code-server,ollama,vircadia"
     # CORS configuration
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://rica.example.com"
@@ -60,3 +60,12 @@ spec:
             name: ollama
             port:
               number: 2022
+              
+      # Vircadia - Metaverse Platform
+      - path: /metaverse
+        pathType: Prefix
+        backend:
+          service:
+            name: vircadia
+            port:
+              number: 2023

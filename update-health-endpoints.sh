@@ -8,14 +8,14 @@ echo "for all headless servers."
 echo
 
 # Check if the required files exist
-if [ ! -f "docker-compose.opencti.yml" ]; then
-    echo "ERROR: docker-compose.opencti.yml not found."
+if [ ! -f "docker-compose..yml" ]; then
+    echo "ERROR: docker-compose..yml not found."
     echo "Please make sure you're running this script from the Rica root directory."
     exit 1
 fi
 
-if [ ! -f "docker-compose.openbas.yml" ]; then
-    echo "ERROR: docker-compose.openbas.yml not found."
+if [ ! -f "docker-compose..yml" ]; then
+    echo "ERROR: docker-compose..yml not found."
     echo "Please make sure you're running this script from the Rica root directory."
     exit 1
 fi
@@ -34,10 +34,10 @@ if [ ! -d "nginx/health" ]; then
     echo "Created nginx/health directory"
 fi
 
-# Create health check endpoint for OpenCTI
-echo "Creating health check endpoint for OpenCTI (Fabric)..."
+# Create health check endpoint for 
+echo "Creating health check endpoint for  (Fabric)..."
 cat > nginx/health/fabric.conf << 'EOF'
-# OpenCTI (Fabric) Health Check
+#  (Fabric) Health Check
 
 location /health/fabric {
     access_log off;
@@ -46,10 +46,10 @@ location /health/fabric {
 }
 EOF
 
-# Create health check endpoint for OpenBAS
-echo "Creating health check endpoint for OpenBAS (Simulations)..."
+# Create health check endpoint for 
+echo "Creating health check endpoint for  (Simulations)..."
 cat > nginx/health/sims.conf << 'EOF'
-# OpenBAS (Simulations) Health Check
+#  (Simulations) Health Check
 
 location /health/sims {
     access_log off;
@@ -91,6 +91,18 @@ location /health/ollama {
     access_log off;
     add_header Content-Type application/json;
     return 200 '{"status":"ok","service":"ollama"}';
+}
+EOF
+
+# Create health check endpoint for Vircadia
+echo "Creating health check endpoint for Vircadia..."
+cat > nginx/health/metaverse.conf << 'EOF'
+# Vircadia Health Check
+
+location /health/metaverse {
+    access_log off;
+    add_header Content-Type application/json;
+    return 200 '{"status":"ok","service":"metaverse"}';
 }
 EOF
 

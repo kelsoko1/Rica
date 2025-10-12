@@ -92,6 +92,17 @@ class OllamaService {
    */
   async streamChat(messages, onChunk, options = {}) {
     try {
+      // Check for command messages and adjust the prompt
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'user' && lastMessage.content.startsWith('/edit')) {
+        // Look for code context in system messages
+        const codeContext = messages.find(msg => msg.role === 'system' && msg.content.includes('Code context provided'));
+        if (codeContext) {
+          // Modify the last message to be an edit instruction
+          lastMessage.content = `You are an expert programmer. Please edit the following code as requested. Only output the edited code in a markdown code block. Do not include any explanations.\n\n${codeContext.content}\n\nEdit instruction: ${lastMessage.content.replace('/edit', '')}`;
+        }
+      }
+
       const response = await fetch(`${this.baseUrl}/api/chat`, {
         method: 'POST',
         headers: {
@@ -142,7 +153,7 @@ class OllamaService {
 
   /**
    * List available models
-   * @returns {Promise<Array>} - List of models
+   * @returns {Promise<Array>} - List of models with details
    */
   async listModels() {
     try {
@@ -153,11 +164,97 @@ class OllamaService {
       }
 
       const data = await response.json();
-      return data.models || [];
+      
+      if (!data || !data.models || data.models.length === 0) {
+        console.warn('No models found in API response, using hardcoded list');
+        return this.getDefaultModels();
+      }
+      
+      // Return the models from the API
+      return data.models.map(model => ({
+        name: model.name,
+        model: model.model || model.name,
+        modified_at: model.modified_at,
+        size: model.size,
+        digest: model.digest,
+        details: model.details || { family: model.name.split(':')[0] }
+      }));
     } catch (error) {
-      console.error('Ollama list models error:', error);
-      throw error;
+      console.error('Ollama list models error, using default models:', error);
+      return this.getDefaultModels();
     }
+  }
+
+  /**
+   * Get the list of installed models
+   * @returns {Array} - Array of model objects
+   */
+  getDefaultModels() {
+    return [
+      { 
+        name: 'deepseek-r1:1.5b', 
+        model: 'deepseek-r1:1.5b', 
+        details: { 
+          family: 'DeepSeek',
+          description: 'DeepSeek R1 1.5B - Fast and efficient model for general use',
+          size: '1.1GB'
+        } 
+      },
+      { 
+        name: 'llama3.1:8b', 
+        model: 'llama3.1:8b', 
+        details: { 
+          family: 'Llama 3.1',
+          description: 'Llama 3.1 8B - High quality responses, good balance of speed and capability',
+          size: '4.9GB'
+        } 
+      },
+      { 
+        name: 'llama3.2:3b', 
+        model: 'llama3.2:3b', 
+        details: { 
+          family: 'Llama 3.2',
+          description: 'Llama 3.2 3B - Lightweight version with good performance',
+          size: '2.0GB'
+        } 
+      },
+      { 
+        name: 'mistral:7b', 
+        model: 'mistral:7b', 
+        details: { 
+          family: 'Mistral',
+          description: 'Mistral 7B - High quality responses with good reasoning',
+          size: '4.4GB'
+        } 
+      },
+      { 
+        name: 'qwen2.5:3b', 
+        model: 'qwen2.5:3b', 
+        details: { 
+          family: 'Qwen',
+          description: 'Qwen 2.5 3B - Good balance of speed and performance',
+          size: '1.9GB'
+        } 
+      },
+      { 
+        name: 'deepseek-llm:latest', 
+        model: 'deepseek-llm:latest', 
+        details: { 
+          family: 'DeepSeek',
+          description: 'Latest DeepSeek LLM - Most capable DeepSeek model',
+          size: '4.0GB'
+        } 
+      },
+      { 
+        name: 'deepseek-coder:latest', 
+        model: 'deepseek-coder:latest', 
+        details: { 
+          family: 'DeepSeek',
+          description: 'DeepSeek Coder - Specialized for coding tasks',
+          size: '776MB'
+        } 
+      }
+    ];
   }
 
   /**

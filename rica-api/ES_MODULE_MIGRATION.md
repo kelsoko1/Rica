@@ -85,8 +85,8 @@ KUBERNETES_CONFIG=/path/to/kubeconfig
 # Optional
 PORT=3001
 NODE_ENV=development
-OPENCTI_GRAPHQL_URL=http://localhost:4000/graphql
-OPENBAS_API_URL=http://localhost:8080/api
+_GRAPHQL_URL=http://localhost:4000/graphql
+_API_URL=http://localhost:8080/api
 ```
 
 ### 3. Start the Server

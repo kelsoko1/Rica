@@ -18,6 +18,8 @@ This document describes the standardized port mapping for all Rica services afte
 | **Activepieces** | 2020 | HTTP | Automation and workflow platform |
 | **Code Server** | 2021 | HTTP | VS Code in browser |
 | **Ollama** | 2022 | HTTP | Local LLM server (internal: 11434) |
+| **Vircadia** | 2023 | HTTP | Metaverse platform (internal: 3020) |
+| **Vircadia Web** | 2024 | HTTP | Spatial metaverse web client |
 
 ### Database Services (Internal Only)
 | Service | Port | Protocol | Description |
@@ -41,6 +43,8 @@ Rica Landing:   http://localhost:3000
 Activepieces:   http://localhost:2020
 Code Server:    http://localhost:2021
 Ollama:         http://localhost:2022
+Vircadia:       http://localhost:2023
+Vircadia Web:   http://localhost:2024
 ```
 
 ### Production (with Nginx)
@@ -52,6 +56,7 @@ Rica Landing:   https://yourdomain.com/landing
 Activepieces:   https://yourdomain.com/auto
 Code Server:    https://yourdomain.com/code
 Ollama:         https://yourdomain.com/ollama
+Vircadia:       https://yourdomain.com/vircadia
 ```
 
 ## Kubernetes Multi-Tenancy
@@ -65,6 +70,7 @@ Each tenant gets their own isolated namespace with the following services:
 | Activepieces | 80 | 2020 | Automation platform |
 | Code Server | 8080 | 2021 | VS Code in browser |
 | Ollama | 11434 | 2022 | LLM server |
+| Vircadia | 3020 | 2023 | Metaverse platform |
 | PostgreSQL | 5432 | N/A | Internal database |
 | Redis | 6379 | N/A | Internal cache |
 
@@ -90,6 +96,7 @@ Gateway: 172.25.0.1
 ollama_data:    /root/.ollama
 postgres_data:  /var/lib/postgresql/data
 redis_data:     /data
+vircadia_data:  /root/.vircadia
 ```
 
 ## Environment Variables
@@ -122,6 +129,11 @@ AP_POSTGRES_HOST=activepieces-postgres
 AP_REDIS_HOST=activepieces-redis
 ```
 
+### Vircadia
+```bash
+VIRCADIA_HOST=0.0.0.0:3020
+```
+
 ## Health Check Endpoints
 
 All services provide health check endpoints:
@@ -132,6 +144,7 @@ Rica API:       http://localhost:3001/health
 Activepieces:   http://localhost:2020/api/v1/health
 Code Server:    http://localhost:2021/healthz
 Ollama:         http://localhost:2022/api/tags
+Vircadia:       http://localhost:2023/health
 ```
 
 ## Firewall Rules (Production)
@@ -147,6 +160,7 @@ Ollama:         http://localhost:2022/api/tags
 2020/tcp - Activepieces
 2021/tcp - Code Server
 2022/tcp - Ollama
+2023/tcp - Vircadia
 3000/tcp - Rica Landing
 3001/tcp - Rica API
 3030/tcp - Rica UI
@@ -160,7 +174,8 @@ Ollama:         http://localhost:2022/api/tags
 1. **Rica UI**: Moved from port 3000 to 3030
 2. **Rica Landing**: Now uses port 3000 (previously conflicted)
 3. **Ollama**: External port remains 2022, internal port is 11434
-4. **Removed Services**: OpenCTI and OpenBAS have been removed
+4. **Removed Services**:  and  have been removed
+5. **Added Service**: Vircadia
 
 ### Update Checklist
 - [x] Update docker-compose files
@@ -229,6 +244,9 @@ curl -s http://localhost:2021 > /dev/null && echo "✓ Code Server (2021)" || ec
 
 # Test Ollama
 curl -s http://localhost:2022/api/tags > /dev/null && echo "✓ Ollama (2022)" || echo "✗ Ollama (2022)"
+
+# Test Vircadia
+curl -s http://localhost:2023/health > /dev/null && echo "✓ Vircadia (2023)" || echo "✗ Vircadia (2023)"
 ```
 
 ## References
@@ -241,5 +259,5 @@ curl -s http://localhost:2022/api/tags > /dev/null && echo "✓ Ollama (2022)" |
 ---
 
 **Last Updated:** 2025-10-07
-**Version:** 2.0
+**Version:** 2.1
 **Status:** Active

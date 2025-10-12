@@ -24,6 +24,7 @@ case "$COMMAND" in
         echo "- Activepieces (Auto): http://localhost:2020"
         echo "- Code Server: http://localhost:2021"
         echo "- Ollama: http://localhost:2022"
+        echo "- Vircadia (Metaverse): http://localhost:2023"
         ;;
     ui)
         echo "Starting Rica UI components..."
@@ -45,24 +46,25 @@ case "$COMMAND" in
         echo "- Activepieces (Auto): http://localhost:2020"
         echo "- Code Server: http://localhost:2021"
         echo "- Ollama: http://localhost:2022"
+        echo "- Vircadia (Metaverse): http://localhost:2023"
         ;;
-    opencti)
-        echo "Starting OpenCTI (Fabric)..."
-        docker-compose -f docker-compose.opencti.yml up -d
+    )
+        echo "Starting  (Fabric)..."
+        docker-compose -f docker-compose..yml up -d
         echo
-        echo "OpenCTI started successfully. Access at http://localhost:4000"
+        echo " started successfully. Access at http://localhost:4000"
         ;;
-    openbas)
-        echo "Starting OpenBAS (Simulations)..."
-        docker-compose -f docker-compose.openbas.yml up -d
+    )
+        echo "Starting  (Simulations)..."
+        docker-compose -f docker-compose..yml up -d
         echo
-        echo "OpenBAS started successfully. Access at http://localhost:3000"
+        echo " started successfully. Access at http://localhost:3000"
         ;;
     activepieces)
         echo "Starting Activepieces (Auto)..."
         docker-compose -f docker-compose.activepieces.yml up -d
         echo
-        echo "Activepieces started successfully. Access at http://localhost:2022"
+        echo "Activepieces started successfully. Access at http://localhost:2020"
         ;;
     code-server)
         echo "Starting Code Server..."
@@ -76,6 +78,12 @@ case "$COMMAND" in
         echo
         echo "Ollama started successfully. Access at http://localhost:2022"
         ;;
+    vircadia)
+        echo "Starting Vircadia (Metaverse)..."
+        docker-compose -f docker-compose.vircadia.yml up -d
+        echo
+        echo "Vircadia started successfully. Access at http://localhost:2023"
+        ;;
     stop)
         echo "Stopping all Rica components..."
         docker-compose -f docker-compose.master.yml down
@@ -84,7 +92,7 @@ case "$COMMAND" in
         ;;
     status)
         echo "Checking status of Rica components..."
-        docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E 'rica|opencti|openbas|activepieces|code-server|ollama'
+        docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E 'rica|activepieces|code-server|ollama|vircadia'
         ;;
     help|*)
         echo "Usage: ./start-rica-complete.sh [command]"
@@ -93,11 +101,10 @@ case "$COMMAND" in
         echo "  all           Start all Rica components"
         echo "  ui            Start Rica UI components only"
         echo "  headless      Start all headless servers"
-        echo "  opencti       Start OpenCTI (Fabric)"
-        echo "  openbas       Start OpenBAS (Simulations)"
         echo "  activepieces  Start Activepieces (Auto)"
         echo "  code-server   Start Code Server"
         echo "  ollama        Start Ollama"
+        echo "  vircadia      Start Vircadia (Metaverse)"
         echo "  stop          Stop all Rica components"
         echo "  status        Check status of Rica components"
         echo "  help          Show this help message"
@@ -106,6 +113,7 @@ case "$COMMAND" in
         echo "  ./start-rica-complete.sh all"
         echo "  ./start-rica-complete.sh ui"
         echo "  ./start-rica-complete.sh headless"
+        echo "  ./start-rica-complete.sh vircadia"
         echo "  ./start-rica-complete.sh stop"
         ;;
 esac

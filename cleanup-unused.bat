@@ -22,12 +22,12 @@ echo - Removed Swarm documentation files
 
 echo.
 echo ========================================
-echo 2. Removing OpenCTI/OpenBAS Docker files (integrated differently now)
+echo 2. Removing / Docker files (integrated differently now)
 echo ========================================
-del /f /q "docker-compose.openbas.yml" 2>nul
-del /f /q "docker-compose.opencti.yml" 2>nul
-del /f /q "fix-opencti-openbas.sh" 2>nul
-echo - Removed OpenCTI/OpenBAS standalone compose files
+del /f /q "docker-compose..yml" 2>nul
+del /f /q "docker-compose..yml" 2>nul
+del /f /q "fix--.sh" 2>nul
+echo - Removed / standalone compose files
 
 echo.
 echo ========================================
@@ -58,7 +58,7 @@ del /f /q "PRODUCTION_GUIDE.md" 2>nul
 del /f /q "QUICKSTART.md" 2>nul
 del /f /q "QUICK_REFERENCE.md" 2>nul
 del /f /q "QUICK_PORT_REFERENCE.md" 2>nul
-del /f /q "OPENBAS_REMOVAL_SUMMARY.md" 2>nul
+del /f /q "_REMOVAL_SUMMARY.md" 2>nul
 del /f /q "DOCKER_SETUP_SUMMARY.md" 2>nul
 del /f /q "DEPLOYMENT_STATUS.md" 2>nul
 del /f /q "FINAL_SUMMARY.md" 2>nul
@@ -137,7 +137,7 @@ echo Cleanup Summary
 echo ========================================
 echo The following categories have been cleaned:
 echo - Swarm/Browser feature files (removed feature)
-echo - OpenCTI/OpenBAS standalone files (now integrated)
+echo - / standalone files (now integrated)
 echo - Duplicate Docker compose files
 echo - Old deployment scripts
 echo - Redundant documentation

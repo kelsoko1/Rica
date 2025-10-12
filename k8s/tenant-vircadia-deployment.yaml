@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vircadia-${TENANT_ID}
+  namespace: tenant-${TENANT_ID}
+  labels:
+    app: vircadia
+    tenant: ${TENANT_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vircadia
+      tenant: ${TENANT_ID}
+  template:
+    metadata:
+      labels:
+        app: vircadia
+        tenant: ${TENANT_ID}
+    spec:
+      containers:
+      - name: vircadia
+        image: vircadia/vircadia-world:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3020
+          name: api
+        - containerPort: 3021
+          name: state
+        env:
+        - name: VRCA_SERVER_CONTAINER_NAME
+          value: "vircadia_world_server"
+        - name: VRCA_SERVER_DEBUG
+          value: "false"
+        - name: VRCA_SERVER_SUPPRESS
+          value: "false"
+        # API Manager
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_CONTAINER_NAME
+          value: "vircadia_world_api_manager"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_HOST_CONTAINER_BIND_INTERNAL
+          value: "0.0.0.0"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_PORT_CONTAINER_BIND_INTERNAL
+          value: "3020"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_HOST_CONTAINER_BIND_EXTERNAL
+          value: "0.0.0.0"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_PORT_CONTAINER_BIND_EXTERNAL
+          value: "3020"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_HOST_PUBLIC_AVAILABLE_AT
+          value: "127.0.0.1"
+        - name: VRCA_SERVER_SERVICE_WORLD_API_MANAGER_PORT_PUBLIC_AVAILABLE_AT
+          value: "3020"
+        # State Manager
+        - name: VRCA_SERVER_SERVICE_WORLD_STATE_MANAGER_CONTAINER_NAME
+          value: "vircadia_world_state_manager"
+        - name: VRCA_SERVER_SERVICE_WORLD_STATE_MANAGER_HOST_CONTAINER_BIND_INTERNAL
+          value: "0.0.0.0"
+        - name: VRCA_SERVER_SERVICE_WORLD_STATE_MANAGER_PORT_CONTAINER_BIND_INTERNAL
+          value: "3021"
+        - name: VRCA_SERVER_SERVICE_WORLD_STATE_MANAGER_HOST_CONTAINER_BIND_EXTERNAL
+          value: "0.0.0.0"
+        - name: VRCA_SERVER_SERVICE_WORLD_STATE_MANAGER_PORT_CONTAINER_BIND_EXTERNAL
+          value: "3021"
+        # Postgres Integration
+        - name: VRCA_SERVER_SERVICE_POSTGRES_CONTAINER_NAME
+          value: "postgres-${TENANT_ID}"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_HOST_CONTAINER_BIND_EXTERNAL
+          value: "postgres-${TENANT_ID}"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_PORT_CONTAINER_BIND_EXTERNAL
+          value: "5432"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_DATABASE
+          value: "vircadia_world_db"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_SUPER_USER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: tenant-${TENANT_ID}-db-credentials
+              key: username
+        - name: VRCA_SERVER_SERVICE_POSTGRES_SUPER_USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tenant-${TENANT_ID}-db-credentials
+              key: password
+        - name: VRCA_SERVER_SERVICE_POSTGRES_SQL_ENV_PREFIX
+          value: "VRCA_SERVER"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_AGENT_PROXY_USER_USERNAME
+          value: "vircadia_agent_proxy"
+        - name: VRCA_SERVER_SERVICE_POSTGRES_AGENT_PROXY_USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tenant-${TENANT_ID}-db-credentials
+              key: agent-password
+        - name: VRCA_SERVER_SERVICE_POSTGRES_EXTENSIONS
+          value: "uuid-ossp,hstore,pgcrypto"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: vircadia-data
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3020
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3020
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: vircadia-data
+        persistentVolumeClaim:
+          claimName: vircadia-data-${TENANT_ID}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vircadia-${TENANT_ID}
+  namespace: tenant-${TENANT_ID}
+  labels:
+    app: vircadia
+    tenant: ${TENANT_ID}
+spec:
+  selector:
+    app: vircadia
+    tenant: ${TENANT_ID}
+  ports:
+  - port: 80
+    targetPort: 3020
+    name: api
+  - port: 3021
+    targetPort: 3021
+    name: state
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vircadia-data-${TENANT_ID}
+  namespace: tenant-${TENANT_ID}
+  labels:
+    app: vircadia
+    tenant: ${TENANT_ID}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard

@@ -40,16 +40,16 @@ spec:
             secretKeyRef:
               name: rica-secrets
               key: deepseek-api-key
-        - name: OPENCTI_GRAPHQL_URL
+        - name: _GRAPHQL_URL
           valueFrom:
             configMapKeyRef:
               name: rica-config
-              key: opencti-graphql-url
-        - name: OPENBAS_API_URL
+              key: -graphql-url
+        - name: _API_URL
           valueFrom:
             configMapKeyRef:
               name: rica-config
-              key: openbas-api-url
+              key: -api-url
         - name: FRONTEND_URL
           valueFrom:
             configMapKeyRef:

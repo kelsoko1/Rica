@@ -42,8 +42,8 @@ Rica is an advanced cybersecurity operations platform with a Palantir Gotham-ins
 ## Technical Stack
 - React.js for the frontend
 - Node.js Express middleware for the backend
-- Integration with OpenCTI for threat intelligence
-- Integration with OpenBAS/Camoufox for attack simulation
+- Integration with  for threat intelligence
+- Integration with /Camoufox for attack simulation
 - Ollama for local LLM capabilities
 
 ## Getting Started
@@ -128,8 +128,8 @@ Rica is designed to integrate with:
   - Undetectable browser fingerprint modification
   - Proxy support and IP protection
   - Team-based profile sharing
-- **OpenCTI** - For threat intelligence data
-- **OpenBAS** - For breach and attack simulation
+- **** - For threat intelligence data
+- **** - For breach and attack simulation
 - **Ollama** - For local LLM capabilities
 
 Configure the connection details in the `.env` file of the `rica-api` service.

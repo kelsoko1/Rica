@@ -1,6 +1,4 @@
-import React, {useState, useEffect} from 'react';
-
-
+import React, { useState, useEffect } from 'react';
 import ThreatDashboard from './components/ThreatDashboard';
 import BrowserTabs from './components/BrowserTabs';
 import TeamsManager from './components/TeamsManager';

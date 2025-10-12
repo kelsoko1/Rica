@@ -9,14 +9,14 @@ echo for all headless servers.
 echo.
 
 REM Check if the required files exist
-if not exist "docker-compose.opencti.yml" (
-    echo ERROR: docker-compose.opencti.yml not found.
+if not exist "docker-compose..yml" (
+    echo ERROR: docker-compose..yml not found.
     echo Please make sure you're running this script from the Rica root directory.
     goto :eof
 )
 
-if not exist "docker-compose.openbas.yml" (
-    echo ERROR: docker-compose.openbas.yml not found.
+if not exist "docker-compose..yml" (
+    echo ERROR: docker-compose..yml not found.
     echo Please make sure you're running this script from the Rica root directory.
     goto :eof
 )
@@ -35,9 +35,9 @@ if not exist "nginx\health" (
     echo Created nginx\health directory
 )
 
-REM Create health check endpoint for OpenCTI
-echo Creating health check endpoint for OpenCTI (Fabric)...
-echo # OpenCTI (Fabric) Health Check > nginx\health\fabric.conf
+REM Create health check endpoint for 
+echo Creating health check endpoint for  (Fabric)...
+echo #  (Fabric) Health Check > nginx\health\fabric.conf
 echo. >> nginx\health\fabric.conf
 echo location /health/fabric { >> nginx\health\fabric.conf
 echo     access_log off; >> nginx\health\fabric.conf
@@ -45,9 +45,9 @@ echo     add_header Content-Type application/json; >> nginx\health\fabric.conf
 echo     return 200 '{"status":"ok","service":"fabric"}'; >> nginx\health\fabric.conf
 echo } >> nginx\health\fabric.conf
 
-REM Create health check endpoint for OpenBAS
-echo Creating health check endpoint for OpenBAS (Simulations)...
-echo # OpenBAS (Simulations) Health Check > nginx\health\sims.conf
+REM Create health check endpoint for 
+echo Creating health check endpoint for  (Simulations)...
+echo #  (Simulations) Health Check > nginx\health\sims.conf
 echo. >> nginx\health\sims.conf
 echo location /health/sims { >> nginx\health\sims.conf
 echo     access_log off; >> nginx\health\sims.conf
@@ -84,6 +84,18 @@ echo     access_log off; >> nginx\health\ollama.conf
 echo     add_header Content-Type application/json; >> nginx\health\ollama.conf
 echo     return 200 '{"status":"ok","service":"ollama"}'; >> nginx\health\ollama.conf
 echo } >> nginx\health\ollama.conf
+
+REM Create health check endpoint for Vircadia
+echo Creating health check endpoint for Vircadia...
+echo # Vircadia Health Check > nginx\health\metaverse.conf
+echo. >> nginx\health\metaverse.conf
+echo location /health/metaverse { >> nginx\health\metaverse.conf
+echo     proxy_pass http://vircadia:3020/health; >> nginx\health\metaverse.conf
+echo     proxy_set_header Host $host; >> nginx\health\metaverse.conf
+echo     proxy_set_header X-Real-IP $remote_addr; >> nginx\health\metaverse.conf
+echo     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; >> nginx\health\metaverse.conf
+echo     proxy_set_header X-Forwarded-Proto $scheme; >> nginx\health\metaverse.conf
+echo } >> nginx\health\metaverse.conf
 
 REM Update headless-servers.conf to include health check endpoints
 echo Updating headless-servers.conf to include health check endpoints...

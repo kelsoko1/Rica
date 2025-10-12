@@ -42,10 +42,10 @@ spec:
           value: "http://rica-api.rica-tenant-${TENANT_ID}.svc.cluster.local:3001"
         - name: REACT_APP_RICA_UI_PORT
           value: "3030"
-        - name: REACT_APP_OPENCTI_URL
-          value: "http://opencti.rica-tenant-${TENANT_ID}.svc.cluster.local:4000"
-        - name: REACT_APP_OPENBAS_URL
-          value: "http://openbas.rica-tenant-${TENANT_ID}.svc.cluster.local:3000"
+        - name: REACT_APP__URL
+          value: "http://.rica-tenant-${TENANT_ID}.svc.cluster.local:4000"
+        - name: REACT_APP__URL
+          value: "http://.rica-tenant-${TENANT_ID}.svc.cluster.local:3000"
         - name: REACT_APP_ACTIVEPIECES_URL
           value: "http://activepieces.rica-tenant-${TENANT_ID}.svc.cluster.local:2020"
         - name: REACT_APP_CODE_SERVER_URL
@@ -118,8 +118,8 @@ data:
       "subscriptionTier": "${SUBSCRIPTION_TIER}",
       "createdAt": "${CREATED_AT}",
       "features": {
-        "opencti": ${FEATURE_OPENCTI},
-        "openbas": ${FEATURE_OPENBAS},
+        "": ${FEATURE_},
+        "": ${FEATURE_},
         "activepieces": ${FEATURE_ACTIVEPIECES},
         "codeServer": ${FEATURE_CODE_SERVER},
         "ollama": ${FEATURE_OLLAMA}

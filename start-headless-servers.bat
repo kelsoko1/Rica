@@ -9,10 +9,10 @@ if "%1"=="" (
     goto :help
 ) else if "%1"=="all" (
     goto :start_all
-) else if "%1"=="opencti" (
-    goto :start_opencti
-) else if "%1"=="openbas" (
-    goto :start_openbas
+) else if "%1"=="" (
+    goto :start_
+) else if "%1"=="" (
+    goto :start_
 ) else if "%1"=="activepieces" (
     goto :start_activepieces
 ) else if "%1"=="code-server" (
@@ -38,25 +38,25 @@ echo.
 echo All headless servers started successfully.
 echo.
 echo Access the services at:
-echo - OpenCTI (Fabric): http://localhost:2020
-echo - OpenBAS (Simulations): http://localhost:2021
+echo -  (Fabric): http://localhost:2020
+echo -  (Simulations): http://localhost:2021
 echo - Activepieces (Auto): http://localhost:2022
 echo - Code Server: http://localhost:2023
 echo - Ollama: http://localhost:11434
 goto :eof
 
-:start_opencti
-echo Starting OpenCTI (Fabric)...
-docker-compose -f docker-compose.opencti.yml up -d
+:start_
+echo Starting  (Fabric)...
+docker-compose -f docker-compose..yml up -d
 echo.
-echo OpenCTI started successfully. Access at http://localhost:2020
+echo  started successfully. Access at http://localhost:2020
 goto :eof
 
-:start_openbas
-echo Starting OpenBAS (Simulations)...
-docker-compose -f docker-compose.openbas.yml up -d
+:start_
+echo Starting  (Simulations)...
+docker-compose -f docker-compose..yml up -d
 echo.
-echo OpenBAS started successfully. Access at http://localhost:2021
+echo  started successfully. Access at http://localhost:2021
 goto :eof
 
 :start_activepieces
@@ -89,7 +89,7 @@ goto :eof
 
 :status
 echo Checking status of headless servers...
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | findstr /i "opencti openbas activepieces code-server ollama"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | findstr /i "  activepieces code-server ollama"
 goto :eof
 
 :help
@@ -97,8 +97,8 @@ echo Usage: start-headless-servers.bat [command]
 echo.
 echo Commands:
 echo   all           Start all headless servers
-echo   opencti       Start OpenCTI (Fabric)
-echo   openbas       Start OpenBAS (Simulations)
+echo          Start  (Fabric)
+echo          Start  (Simulations)
 echo   activepieces  Start Activepieces (Auto)
 echo   code-server   Start Code Server
 echo   ollama        Start Ollama
@@ -108,6 +108,6 @@ echo   help          Show this help message
 echo.
 echo Examples:
 echo   start-headless-servers.bat all
-echo   start-headless-servers.bat opencti
+echo   start-headless-servers.bat 
 echo   start-headless-servers.bat stop
 goto :eof

@@ -4,15 +4,15 @@ This document provides information about the Device Linking System integrated in
 
 ## Overview
 
-The Device Linking System allows you to discover, connect, and manage devices across your network. It collects security telemetry from these devices and feeds the data into OpenCTI and OpenBAS for threat intelligence and security simulation purposes.
+The Device Linking System allows you to discover, connect, and manage devices across your network. It collects security telemetry from these devices and feeds the data into  and  for threat intelligence and security simulation purposes.
 
 ## Features
 
 - **Device Discovery**: Automatically discover devices on your network
 - **Device Management**: Connect to, monitor, and manage devices from a single interface
 - **Data Collection**: Collect security telemetry and system information from connected devices
-- **Integration with OpenCTI**: Feed device data into OpenCTI for threat intelligence analysis
-- **Integration with OpenBAS**: Send device data to OpenBAS for security simulations
+- **Integration with **: Feed device data into  for threat intelligence analysis
+- **Integration with **: Send device data to  for security simulations
 - **Real-time Monitoring**: Monitor device status and security events in real-time
 
 ## Getting Started
@@ -21,8 +21,8 @@ The Device Linking System allows you to discover, connect, and manage devices ac
 
 - Node.js 16.x or later
 - npm 7.x or later
-- OpenCTI server running (optional, default: http://localhost:4000)
-- OpenBAS server running (optional, default: http://localhost:3000)
+-  server running (optional, default: http://localhost:4000)
+-  server running (optional, default: http://localhost:3000)
 
 ### Quick Start
 
@@ -71,8 +71,8 @@ npm start
 
 You can configure the Device Linking System through the Settings tab in the Device Manager:
 
-- **OpenCTI Endpoint**: URL of the OpenCTI GraphQL API
-- **OpenBAS Endpoint**: URL of the OpenBAS API
+- ** Endpoint**: URL of the  GraphQL API
+- ** Endpoint**: URL of the  API
 - **Discovery Interval**: How often to scan for new devices (in seconds)
 - **Data Collection Interval**: How often to collect data from devices (in seconds)
 

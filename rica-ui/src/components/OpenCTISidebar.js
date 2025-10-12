@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import './OpenCTISidebar.css';
+import './Sidebar.css';
 
-const OpenCTISidebar = ({ isOpen, onClose, selectedNode }) => {
+const Sidebar = ({ isOpen, onClose, selectedNode }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   if (!isOpen) return null;
 
   return (
-    <div className="opencti-sidebar">
-      <div className="opencti-sidebar-header">
+    <div className="-sidebar">
+      <div className="-sidebar-header">
         <h2>{selectedNode?.name || 'Node Details'}</h2>
         <button className="close-button" onClick={onClose}>×</button>
       </div>
 
-      <div className="opencti-sidebar-tabs">
+      <div className="-sidebar-tabs">
         <button 
           className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
           onClick={() => setActiveTab('overview')}
@@ -40,7 +40,7 @@ const OpenCTISidebar = ({ isOpen, onClose, selectedNode }) => {
         </button>
       </div>
 
-      <div className="opencti-sidebar-content">
+      <div className="-sidebar-content">
         {activeTab === 'overview' && (
           <div className="tab-content">
             <div className="entity-details">
@@ -93,4 +93,4 @@ const OpenCTISidebar = ({ isOpen, onClose, selectedNode }) => {
   );
 };
 
-export default OpenCTISidebar;
+export default Sidebar;

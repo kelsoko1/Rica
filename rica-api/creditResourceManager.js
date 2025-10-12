@@ -13,6 +13,7 @@ const FEATURE_CREDIT_COSTS = {
   'activepieces': 2,      // 2 credits per hour
   'code-server': 2,       // 2 credits per hour
   'ollama': 4,            // 4 credits per hour (LLM usage)
+  'vircadia': 3,          // 3 credits per hour (Metaverse platform)
   'storage': 0.1          // 0.1 credits per GB per hour
 };
 
@@ -91,6 +92,9 @@ class CreditResourceManager {
     }
     if (tierConfig.features.ollama) {
       totalCredits += FEATURE_CREDIT_COSTS['ollama'] * hoursUsed;
+    }
+    if (tierConfig.features.vircadia) {
+      totalCredits += FEATURE_CREDIT_COSTS['vircadia'] * hoursUsed;
     }
 
     // Always include Rica UI
@@ -291,7 +295,8 @@ class CreditResourceManager {
         ricaUi: FEATURE_CREDIT_COSTS['rica-ui'] * totalHours,
         activepieces: tenant?.tierConfig?.features?.activepieces ? FEATURE_CREDIT_COSTS['activepieces'] * totalHours : 0,
         codeServer: tenant?.tierConfig?.features?.codeServer ? FEATURE_CREDIT_COSTS['code-server'] * totalHours : 0,
-        ollama: tenant?.tierConfig?.features?.ollama ? FEATURE_CREDIT_COSTS['ollama'] * totalHours : 0
+        ollama: tenant?.tierConfig?.features?.ollama ? FEATURE_CREDIT_COSTS['ollama'] * totalHours : 0,
+        vircadia: tenant?.tierConfig?.features?.vircadia ? FEATURE_CREDIT_COSTS['vircadia'] * totalHours : 0
       }
     };
   }

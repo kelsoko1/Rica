@@ -64,7 +64,7 @@ RUN npm ci --production
 RUN npm install --production --no-optional
 ```
 
-### 2. Removed OpenCTI/OpenBAS Dependencies
+### 2. Removed / Dependencies
 These services were removed from the project, so we cleaned up references:
 - ✅ Removed from `docker-compose.master.yml` depends_on
 - ✅ Removed environment variables
@@ -208,7 +208,7 @@ docker exec activepieces-postgres psql -U activepieces -d activepieces -c "SELEC
 
 ### Configuration Files
 - ✅ `rica-api/Dockerfile` - Changed npm ci to npm install
-- ✅ `docker-compose.master.yml` - Removed OpenCTI/OpenBAS dependencies
+- ✅ `docker-compose.master.yml` - Removed / dependencies
 - ✅ All port configurations verified
 
 ### New Scripts

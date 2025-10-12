@@ -252,8 +252,8 @@ if not exist "README.md" (
     echo. >> README.md
     echo ## Features >> README.md
     echo. >> README.md
-    echo - **Threat Intelligence**: OpenCTI integration >> README.md
-    echo - **Security Simulations**: OpenBAS integration >> README.md
+    echo - **Threat Intelligence**:  integration >> README.md
+    echo - **Security Simulations**:  integration >> README.md
     echo - **Automation**: Activepieces workflows >> README.md
     echo - **AI Integration**: Ollama/DeepSeek support >> README.md
     echo - **Code Editor**: VS Code in browser >> README.md
@@ -294,11 +294,11 @@ if not exist ".env.example" (
     echo # Database >> .env.example
     echo POSTGRES_PASSWORD=changeme >> .env.example
     echo. >> .env.example
-    echo # OpenCTI >> .env.example
-    echo OPENCTI_ADMIN_PASSWORD=changeme >> .env.example
+    echo #  >> .env.example
+    echo _ADMIN_PASSWORD=changeme >> .env.example
     echo. >> .env.example
-    echo # OpenBAS >> .env.example
-    echo OPENBAS_ADMIN_PASSWORD=changeme >> .env.example
+    echo #  >> .env.example
+    echo _ADMIN_PASSWORD=changeme >> .env.example
     echo. >> .env.example
     echo # Activepieces >> .env.example
     echo AP_API_KEY=changeme >> .env.example

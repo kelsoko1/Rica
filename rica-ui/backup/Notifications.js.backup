@@ -103,12 +103,12 @@ const Notifications = ({ notifications = [], removeNotification }) => {
       window.ricaNotifications.success(`Data collected from ${data.count} devices`);
     };
     
-    const handleDataSentToOpenCTI = (data) => {
-      window.ricaNotifications.info(`Data sent to OpenCTI (${data.count} devices)`);
+    const handleDataSentTo = (data) => {
+      window.ricaNotifications.info(`Data sent to  (${data.count} devices)`);
     };
     
-    const handleDataSentToOpenBAS = (data) => {
-      window.ricaNotifications.info(`Data sent to OpenBAS (${data.count} devices)`);
+    const handleDataSentTo = (data) => {
+      window.ricaNotifications.info(`Data sent to  (${data.count} devices)`);
     };
     
     // Error events
@@ -121,8 +121,8 @@ const Notifications = ({ notifications = [], removeNotification }) => {
     webSocketClient.on('device:connected', handleDeviceConnected);
     webSocketClient.on('device:disconnected', handleDeviceDisconnected);
     webSocketClient.on('data:collected', handleDataCollected);
-    webSocketClient.on('data:sentToOpenCTI', handleDataSentToOpenCTI);
-    webSocketClient.on('data:sentToOpenBAS', handleDataSentToOpenBAS);
+    webSocketClient.on('data:sentTo', handleDataSentTo);
+    webSocketClient.on('data:sentTo', handleDataSentTo);
     webSocketClient.on('error', handleError);
     webSocketClient.on('deviceDiscovery:error', handleError);
     webSocketClient.on('dataCollection:error', handleError);
@@ -133,8 +133,8 @@ const Notifications = ({ notifications = [], removeNotification }) => {
       webSocketClient.off('device:connected', handleDeviceConnected);
       webSocketClient.off('device:disconnected', handleDeviceDisconnected);
       webSocketClient.off('data:collected', handleDataCollected);
-      webSocketClient.off('data:sentToOpenCTI', handleDataSentToOpenCTI);
-      webSocketClient.off('data:sentToOpenBAS', handleDataSentToOpenBAS);
+      webSocketClient.off('data:sentTo', handleDataSentTo);
+      webSocketClient.off('data:sentTo', handleDataSentTo);
       webSocketClient.off('error', handleError);
       webSocketClient.off('deviceDiscovery:error', handleError);
       webSocketClient.off('dataCollection:error', handleError);

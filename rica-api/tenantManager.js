@@ -47,17 +47,20 @@ const TIER_CONFIGS = {
     features: {
       activepieces: true,
       codeServer: true,
-      ollama: true
+      ollama: true,
+      vircadia: true
     },
     resources: {
       ui: { cpuRequest: '100m', cpuLimit: '200m', memoryRequest: '128Mi', memoryLimit: '256Mi' },
       activepieces: { cpuRequest: '200m', cpuLimit: '400m', memoryRequest: '256Mi', memoryLimit: '512Mi' },
       codeServer: { cpuRequest: '200m', cpuLimit: '400m', memoryRequest: '256Mi', memoryLimit: '512Mi' },
-      ollama: { cpuRequest: '500m', cpuLimit: '1000m', memoryRequest: '512Mi', memoryLimit: '1Gi' }
+      ollama: { cpuRequest: '500m', cpuLimit: '1000m', memoryRequest: '512Mi', memoryLimit: '1Gi' },
+      vircadia: { cpuRequest: '250m', cpuLimit: '500m', memoryRequest: '512Mi', memoryLimit: '1Gi' }
     },
     storage: {
       codeServer: '2Gi',
-      ollama: '3Gi'
+      ollama: '3Gi',
+      vircadia: '5Gi'
     }
   },
   'personal': {
@@ -77,17 +80,20 @@ const TIER_CONFIGS = {
     features: {
       activepieces: true,
       codeServer: true,
-      ollama: true
+      ollama: true,
+      vircadia: true
     },
     resources: {
       ui: { cpuRequest: '200m', cpuLimit: '400m', memoryRequest: '256Mi', memoryLimit: '512Mi' },
       activepieces: { cpuRequest: '300m', cpuLimit: '600m', memoryRequest: '512Mi', memoryLimit: '1Gi' },
       codeServer: { cpuRequest: '300m', cpuLimit: '600m', memoryRequest: '512Mi', memoryLimit: '1Gi' },
-      ollama: { cpuRequest: '1000m', cpuLimit: '2000m', memoryRequest: '2Gi', memoryLimit: '4Gi' }
+      ollama: { cpuRequest: '1000m', cpuLimit: '2000m', memoryRequest: '2Gi', memoryLimit: '4Gi' },
+      vircadia: { cpuRequest: '500m', cpuLimit: '1000m', memoryRequest: '1Gi', memoryLimit: '2Gi' }
     },
     storage: {
       codeServer: '5Gi',
-      ollama: '7Gi'
+      ollama: '7Gi',
+      vircadia: '10Gi'
     }
   },
   'team': {
@@ -107,17 +113,20 @@ const TIER_CONFIGS = {
     features: {
       activepieces: true,
       codeServer: true,
-      ollama: true
+      ollama: true,
+      vircadia: true
     },
     resources: {
       ui: { cpuRequest: '300m', cpuLimit: '600m', memoryRequest: '512Mi', memoryLimit: '1Gi' },
       activepieces: { cpuRequest: '500m', cpuLimit: '1000m', memoryRequest: '1Gi', memoryLimit: '2Gi' },
       codeServer: { cpuRequest: '500m', cpuLimit: '1000m', memoryRequest: '1Gi', memoryLimit: '2Gi' },
-      ollama: { cpuRequest: '2000m', cpuLimit: '4000m', memoryRequest: '4Gi', memoryLimit: '8Gi' }
+      ollama: { cpuRequest: '2000m', cpuLimit: '4000m', memoryRequest: '4Gi', memoryLimit: '8Gi' },
+      vircadia: { cpuRequest: '1000m', cpuLimit: '2000m', memoryRequest: '2Gi', memoryLimit: '4Gi' }
     },
     storage: {
       codeServer: '15Gi',
-      ollama: '20Gi'
+      ollama: '20Gi',
+      vircadia: '25Gi'
     }
   }
 };
@@ -244,6 +253,7 @@ class TenantManager {
         FEATURE_ACTIVEPIECES: tierConfig.features.activepieces,
         FEATURE_CODE_SERVER: tierConfig.features.codeServer,
         FEATURE_OLLAMA: tierConfig.features.ollama,
+        FEATURE_VIRCADIA: tierConfig.features.vircadia,
         
         // Limits
         MAX_PROFILES: tierConfig.maxProfiles,
@@ -272,7 +282,13 @@ class TenantManager {
         OLLAMA_CPU_LIMIT: tierConfig.resources.ollama.cpuLimit,
         OLLAMA_MEMORY_REQUEST: tierConfig.resources.ollama.memoryRequest,
         OLLAMA_MEMORY_LIMIT: tierConfig.resources.ollama.memoryLimit,
-        OLLAMA_STORAGE: tierConfig.storage.ollama
+        OLLAMA_STORAGE: tierConfig.storage.ollama,
+        
+        VIRCADIA_CPU_REQUEST: tierConfig.resources.vircadia.cpuRequest,
+        VIRCADIA_CPU_LIMIT: tierConfig.resources.vircadia.cpuLimit,
+        VIRCADIA_MEMORY_REQUEST: tierConfig.resources.vircadia.memoryRequest,
+        VIRCADIA_MEMORY_LIMIT: tierConfig.resources.vircadia.memoryLimit,
+        VIRCADIA_STORAGE: tierConfig.storage.vircadia
       };
 
       // Step 1: Create namespace with resource quotas and network policies
@@ -519,7 +535,8 @@ class TenantManager {
           ricaUi: pods.some(p => p.metadata.labels?.app === 'rica-ui'),
           activepieces: pods.some(p => p.metadata.labels?.app === 'activepieces'),
           codeServer: pods.some(p => p.metadata.labels?.app === 'code-server'),
-          ollama: pods.some(p => p.metadata.labels?.app === 'ollama')
+          ollama: pods.some(p => p.metadata.labels?.app === 'ollama'),
+          vircadia: pods.some(p => p.metadata.labels?.app === 'vircadia')
         }
       };
 

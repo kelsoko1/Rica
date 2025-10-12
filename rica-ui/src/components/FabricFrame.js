@@ -25,7 +25,7 @@ const FabricFrame = ({ onError }) => {
       <div className="iframe-container">
         <iframe
           src="http://localhost:2020"
-          title="OpenCTI Threat Intelligence Platform"
+          title=" Threat Intelligence Platform"
           className="external-iframe"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"
           allow="clipboard-read; clipboard-write"

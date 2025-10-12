@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose for Rica Core Services
 # This file starts Rica UI (3030), Rica API (3001), and Rica Landing (3000)
 

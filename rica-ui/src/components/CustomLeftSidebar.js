@@ -53,6 +53,23 @@ export default function CustomLeftSidebar({ collapsed, onToggle, onNavItemChange
         </button>
 
         <button 
+          className={`nav-btn ${activeItem === 'metaverse' ? 'active' : ''} ${hoverItem === 'metaverse' ? 'hover' : ''}`} 
+          title="Metaverse"
+          onClick={() => handleNavClick('metaverse')}
+          onMouseEnter={() => setHoverItem('metaverse')}
+          onMouseLeave={() => setHoverItem(null)}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M7.5 12C7.5 14.5 9.5 16.5 12 16.5C14.5 16.5 16.5 14.5 16.5 12C16.5 9.5 14.5 7.5 12 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 7.5C13.3807 7.5 14.5 6.38071 14.5 5C14.5 3.61929 13.3807 2.5 12 2.5C10.6193 2.5 9.5 3.61929 9.5 5C9.5 6.38071 10.6193 7.5 12 7.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16.5 19C17.8807 19 19 17.8807 19 16.5C19 15.1193 17.8807 14 16.5 14C15.1193 14 14 15.1193 14 16.5C14 17.8807 15.1193 19 16.5 19Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M7.5 19C8.88071 19 10 17.8807 10 16.5C10 15.1193 8.88071 14 7.5 14C6.11929 14 5 15.1193 5 16.5C5 17.8807 6.11929 19 7.5 19Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {!collapsed && <span>Metaverse</span>}
+        </button>
+
+        <button 
           className={`nav-btn ${activeItem === 'teams' ? 'active' : ''} ${hoverItem === 'teams' ? 'hover' : ''}`} 
           title="Teams"
           onClick={() => handleNavClick('teams')}

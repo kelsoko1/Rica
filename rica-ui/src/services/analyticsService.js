@@ -4,9 +4,14 @@
  */
 
 // Configuration
-const ANALYTICS_ENDPOINT = process.env.REACT_APP_ANALYTICS_ENDPOINT || 'https://analytics.rica-app.com/collect';
-const ANALYTICS_ENABLED = process.env.REACT_APP_ANALYTICS_ENABLED !== 'false';
-const DEBUG_MODE = process.env.NODE_ENV !== 'production';
+const env = typeof import.meta !== 'undefined' ? import.meta.env : {};
+const ANALYTICS_ENDPOINT =
+  env.VITE_ANALYTICS_ENDPOINT ||
+  env.REACT_APP_ANALYTICS_ENDPOINT ||
+  'https://analytics.rica-app.com/collect';
+const ANALYTICS_ENABLED =
+  (env.VITE_ANALYTICS_ENABLED ?? env.REACT_APP_ANALYTICS_ENABLED ?? 'true') !== 'false';
+const DEBUG_MODE = (env.MODE || env.NODE_ENV || 'development') !== 'production';
 
 // Queue for batching events
 let eventQueue = [];

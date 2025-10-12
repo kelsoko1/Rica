@@ -17,8 +17,8 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/rica
       - JWT_SECRET=${JWT_SECRET}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - OPENCTI_URL=http://opencti:4000
-      - OPENBAS_URL=http://openbas:3000
+      - _URL=http://:4000
+      - _URL=http://:3000
     volumes:
       - ./logs:/app/logs
     depends_on:
@@ -38,29 +38,29 @@ services:
     networks:
       - rica-network
 
-  # OpenCTI (optional - uncomment if you want to run OpenCTI in the same stack)
-  # opencti:
-  #   image: opencti/platform:latest
-  #   container_name: rica-opencti
+  #  (optional - uncomment if you want to run  in the same stack)
+  # :
+  #   image: /platform:latest
+  #   container_name: rica-
   #   restart: unless-stopped
   #   environment:
   #     - APP__PORT=4000
-  #     - APP__ADMIN__EMAIL=admin@opencti.io
+  #     - APP__ADMIN__EMAIL=admin@.io
   #     - APP__ADMIN__PASSWORD=admin
-  #     - APP__ADMIN__TOKEN=${OPENCTI_ADMIN_TOKEN}
+  #     - APP__ADMIN__TOKEN=${_ADMIN_TOKEN}
   #   ports:
   #     - "4000:4000"
   #   networks:
   #     - rica-network
 
-  # OpenBAS (optional - uncomment if you want to run OpenBAS in the same stack)
-  # openbas:
-  #   image: openbas/openbas:latest
-  #   container_name: rica-openbas
+  #  (optional - uncomment if you want to run  in the same stack)
+  # :
+  #   image: /:latest
+  #   container_name: rica-
   #   restart: unless-stopped
   #   environment:
   #     - APP__PORT=3000
-  #     - APP__ADMIN__EMAIL=admin@openbas.io
+  #     - APP__ADMIN__EMAIL=admin@.io
   #     - APP__ADMIN__PASSWORD=admin
   #   ports:
   #     - "3000:3000"

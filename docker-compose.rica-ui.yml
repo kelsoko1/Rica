@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Rica UI
   rica-ui:
@@ -40,8 +38,8 @@ services:
       - OLLAMA_EXTERNAL_URL=http://localhost:2022
       - API_KEY=${API_KEY:-changeme_in_production}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
-      - OPENCTI_URL=http://opencti:4000
-      - OPENBAS_URL=http://openbas:3000
+      - _URL=http://:4000
+      - _URL=http://:3000
       - ACTIVEPIECES_URL=http://activepieces:80
     networks:
       - rica-network

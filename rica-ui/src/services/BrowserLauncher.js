@@ -1,8 +1,10 @@
 import BROWSER_CONFIG from '../config/swarm.config';
 import { trackError, trackEvent } from './analyticsService';
 
+const env = typeof import.meta !== 'undefined' ? import.meta.env : {};
+
 // API configuration
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = env.VITE_API_URL || env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // Retry configuration
 const MAX_RETRIES = BROWSER_CONFIG.request.retries;

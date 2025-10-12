@@ -204,7 +204,7 @@ export default function IntegratedTerminal() {
           
           setTerminalHistory(prev => [
             ...prev,
-            { type: 'output', text: 'Fetching threat actors from OpenCTI...' },
+            { type: 'output', text: 'Fetching threat actors from ...' },
             { type: 'output', text: `Found ${actors.length} threat actors:`, className: 'success' },
             ...actors.map(actor => ({ 
               type: 'output', 
