@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "outDir": "./lib",
+        "rootDirs": ["src"],
+        "strict": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+	 "types": ["node"],
+	 "skipLibCheck": true
+    },
+    "exclude": ["test"],
+    "typedocOptions": {
+        "entryPoints": ["src/app.ts"],
+        "out": "docs"
+    }
+}
+
